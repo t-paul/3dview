@@ -9,7 +9,7 @@ public:
     virtual ~Mesh();
     
     void bind();
-    void draw();
+    void draw(GLuint vertex, GLuint normal);
     
     const glm::vec3 & bboxMin();
     const glm::vec3 & bboxMax();
@@ -18,9 +18,7 @@ private:
     std::string fileName;
     unsigned int count;
     GLuint vertexBuffer;
-    GLuint indexBuffer;
     GLuint normalBuffer;
-    GLuint bcoordsBuffer;
     glm::vec3 min, max;
 };
 

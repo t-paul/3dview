@@ -16,15 +16,23 @@ public:
     virtual ~GLWidget();
 private:
     Ui::GLWidget widget;
-    int xRot;
-    int yRot;
-    int zRot;
+    float xRot;
+    float yRot;
+    float zRot;
     float scale;
+    float light_angle;
+    float distance;
     QPoint lastMousePos;
     QTimer *timer;
     
     GLuint programId;
-    
+    GLuint vao;
+GLuint AmbientProductID, DiffuseProductID, SpecularProductID;
+GLuint ModelViewID;
+GLuint ProjectionID;
+GLuint LightPositionID;
+GLuint ShininessID;
+
     Transform transform;
     Mesh *mesh;
     float tick;

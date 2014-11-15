@@ -3,11 +3,14 @@
 #include <iostream>
 #include <fstream>
 #include <GL/glew.h>
-#include <glm/glm.hpp>
 
 #define GLM_FORCE_RADIANS
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/rotate_vector.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+
+#define BUFFER_OFFSET(offset) ((void *)(offset))
 
 #include "GLWidget.h"
 
@@ -18,6 +21,8 @@ GLWidget::GLWidget(QWidget* parent) : QGLWidget(parent)
     tick = 0;
     scale = 1;
     xRot = yRot = zRot = 0;
+    light_angle = 0;
+    distance = 50;
 
     mesh = NULL;
     timer = new QTimer();
@@ -85,6 +90,9 @@ GLWidget::loadMesh(std::string filename)
 void
 GLWidget::initializeGL()
 {
+    // Otherwise glGenVertexArrays crashes on Linux
+    glewExperimental = GL_TRUE;
+
     GLenum err = glewInit();
     if (GLEW_OK != err)
     {
@@ -99,18 +107,21 @@ GLWidget::initializeGL()
     const unsigned char *glsl = glGetString(GL_SHADING_LANGUAGE_VERSION);
     fprintf(stdout, "GLSL Version: %s\n", glsl);
 
-    glEnable(GL_DEPTH_TEST);
-
-    glFrontFace(GL_CCW);
-    glCullFace(GL_BACK);
-    //glEnable(GL_CULL_FACE);
-
     qglClearColor(QColor(0xfd, 0xf6, 0xe3));
-    programId = loadShaders("resources/shader/tutorial.vs", "resources/shader/tutorial.fs");
 
-//    programId = loadShaders("resources/shader/basic.vs", "resources/shader/basic.fs");
-    //programId = loadShaders("resources/shader/simple.vs", "resources/shader/simple.fs");
-    //programId = loadShaders("resources/shader/vertex-lighting.vs", "resources/shader/vertex-lighting.fs");
+    glEnable(GL_DEPTH_TEST);
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+    
+    programId = loadShaders("resources/shader/shader.vs", "resources/shader/shader.fs");
+
+    AmbientProductID = glGetUniformLocation(programId, "AmbientProduct");
+    DiffuseProductID = glGetUniformLocation(programId, "DiffuseProduct");
+    SpecularProductID = glGetUniformLocation(programId, "SpecularProduct");
+    ModelViewID = glGetUniformLocation(programId, "ModelView");
+    ProjectionID = glGetUniformLocation(programId, "Projection");
+    LightPositionID = glGetUniformLocation(programId, "LightPosition");
+    ShininessID = glGetUniformLocation(programId, "Shininess");
 
     loadMesh("/data/OpenSCAD/3dview/resources/meshes/UltimakerRobot_support.stl");
 }
@@ -130,69 +141,49 @@ void
 GLWidget::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glLoadIdentity();
+
+    tick += 0.01;
 
     glValidateProgram(programId);
     glUseProgram(programId);
 
-    tick += 0.01;
+    glUniform4f(AmbientProductID, 0.0, 0.0, 0.6, 1.0);
+    glUniform4f(DiffuseProductID, 0.4, 0.4, 0.4, 1.0);
+    glUniform4f(SpecularProductID, 0.8, 0.8, 0.8, 1.0);
+    glm::vec4 light_pos = glm::vec4(glm::rotateZ(glm::vec3(50.0, 50.0, 200.0), light_angle), 1.0);
+    glUniform4fv(LightPositionID, 1, glm::value_ptr(light_pos));
+    glUniform1f(ShininessID, 64.0);
+
+    float fov = M_PI * 75.0 / 180.0;
+    glm::mat4 Projection = glm::perspective(fov, 1.0f, 1.0f, 10000.0f);
+    glUniformMatrix4fv(ProjectionID, 1, GL_FALSE, glm::value_ptr(Projection));
+
+    glm::mat4 model = glm::mat4();
+    model = glm::translate(model, glm::vec3(0.0, 0.0, 0.0));
+    model = glm::rotate(model, zRot, glm::vec3(0.0, 0.0, 1.0));
+    model = glm::rotate(model, yRot, glm::vec3(0.0, 1.0, 0.0));
+    model = glm::rotate(model, xRot, glm::vec3(1.0, 0.0, 0.0));
     
-    //transform.setTranslate(glm::vec3(0, 0, 0));
-    //transform.setUniformScale(sinf(tick));
-    //transform.setRotate(glm::vec3(-M_PI/2, 0, M_PI*cosf(tick)));
-    GLint gWorld = getLocationId(programId, "gWorld");
-    glm::mat4 matrix = transform.matrix();
-    glUniformMatrix4fv(gWorld, 1, GL_FALSE, &matrix[0][0]);
-
-    GLint dirLightColorLocationId = getLocationId(programId, "gDirectionalLight.Color");
-    GLint dirLightAmbientIntensityLocationId = getLocationId(programId, "gDirectionalLight.AmbientIntensity");
-    GLint dirLightDiffuseIntensityLocationId = getLocationId(programId, "gDirectionalLight.DiffuseIntensity");
-    GLint dirLightDirectionLocationId = getLocationId(programId, "gDirectionalLight.Direction");
-    glUniform3f(dirLightColorLocationId, color.redF(), color.greenF(), color.blueF());
-    glUniform1f(dirLightAmbientIntensityLocationId, ambientIntensity);
-    glUniform1f(dirLightDiffuseIntensityLocationId, diffuseIntensity);
+    glm::mat4 view = glm::mat4();
+    view = glm::translate(view, glm::vec3(0.0, -20.0, -distance));
+    view = glm::rotate(view, (float)(-M_PI / 2.0f), glm::vec3(1.0, 0.0, 0.0));
     
-    glm::vec3 direction(0.0f, 0.5f, 0.8f);
-    glUniform3f(dirLightDirectionLocationId, direction.x, direction.y, direction.z);
+    glm::mat4 modelview = view * model;
+    glUniformMatrix4fv(ModelViewID, 1, GL_FALSE, glm::value_ptr(modelview));
 
-    GLint eyeWorldPosLocationId = getLocationId(programId, "gEyeWorldPos");
-    GLint matSpecularIntensityLocationId = getLocationId(programId, "gMatSpecularIntensity");
-    GLint specularPowerLocationId = getLocationId(programId, "gSpecularPower");
-    glUniform3f(eyeWorldPosLocationId, transform.pos().x, transform.pos().y, transform.pos().z);
-    glUniform1f(matSpecularIntensityLocationId, specularIntensity);
-    glUniform1f(specularPowerLocationId, specularPower);
-
+    GLuint vPosition = glGetAttribLocation(programId, "vPosition");
+    GLuint vNormal = glGetAttribLocation(programId, "vNormal");
     if (mesh) {
-        mesh->draw();
+        mesh->draw(vPosition, vNormal);
     }
 
-    glColor3d(0.5, 0.5, 0.5);
-    glLoadIdentity();
-    glBegin(GL_LINES);
-    double l = 1000.0;
-    glVertex3d(-l, 0, 0);
-    glVertex3d(+l, 0, 0);
-    glVertex3d(0, -l, 0);
-    glVertex3d(0, +l, 0);
-    glVertex3d(0, 0, -l);
-    glVertex3d(0, 0, +l);
-    glEnd();
 }
 
 void
 GLWidget::resizeGL(int width, int height)
 {
     transform.setWindow(width, height);
-    glViewport(0, 0, width, height);
-
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-#ifdef QT_OPENGL_ES_1
-    glOrthof(-0.5, +0.5, -0.5, +0.5, 4.0, 15.0);
-#else
-    glOrtho(-1, +1, -1, +1, 1.0, 25.0);
-#endif
-    glMatrixMode(GL_MODELVIEW);
+    glViewport(0, 0, (GLint)width, (GLint)height);
 }
 
 void
@@ -240,39 +231,25 @@ GLWidget::keyPressEvent(QKeyEvent *event)
     
     if (event->modifiers().testFlag(Qt::ShiftModifier)) {
 	if (event->key() == Qt::Key_Up) {
-	    transform.setCamera(transform.pos() + glm::vec3(0, 0, 1), transform.target(), transform.up());
+	    yRot += 0.1;
 	} else if (event->key() == Qt::Key_Down) {
-	    transform.setCamera(transform.pos() + glm::vec3(0, 0, -1), transform.target(), transform.up());
+	    yRot -= 0.1;
 	} else if (event->key() == Qt::Key_Left) {
-	    transform.setCamera(transform.pos() + glm::vec3(-1, 0, 0), transform.target(), transform.up());
 	} else if (event->key() == Qt::Key_Right) {
-	    transform.setCamera(transform.pos() + glm::vec3(1, 0, 0), transform.target(), transform.up());
 	}
     } else {
 	if (event->key() == Qt::Key_Plus) {
-	    glm::vec3 look = transform.target() - transform.pos();
-	    glm::vec3 pos = glm::vec3(glm::translate(0.1f * look) * glm::vec4(transform.pos(), 1));
-	    transform.setCamera(pos, transform.target(), transform.up());
+	    distance *= 0.9;
 	} else if (event->key() == Qt::Key_Minus) {
-	    glm::vec3 look = transform.target() - transform.pos();
-	    glm::vec3 pos = glm::vec3(glm::translate(-0.1f * look) * glm::vec4(transform.pos(), 1));
-	    transform.setCamera(pos, transform.target(), transform.up());
+	    distance *= 1.1;
 	} else if (event->key() == Qt::Key_Up) {
-	    glm::vec3 look = transform.target() - transform.pos();
-	    glm::vec3 axis = glm::cross(look, transform.up());
-	    glm::vec3 pos = glm::rotate(transform.pos(), -angle, axis);
-	    transform.setCamera(pos, transform.target(), transform.up());
+	    xRot += 0.1;
 	} else if (event->key() == Qt::Key_Down) {
-	    glm::vec3 look = transform.target() - transform.pos();
-	    glm::vec3 axis = glm::cross(look, transform.up());
-	    glm::vec3 pos = glm::rotate(transform.pos(), angle, axis);
-	    transform.setCamera(pos, transform.target(), transform.up());
+	    xRot -= 0.1;
 	} else if (event->key() == Qt::Key_Left) {
-	    glm::vec3 pos = glm::rotateZ(transform.pos(), angle);
-	    transform.setCamera(pos, transform.target(), transform.up());
+	    zRot += 0.1;
 	} else if (event->key() == Qt::Key_Right) {
-	    glm::vec3 pos = glm::rotateZ(transform.pos(), -angle);
-	    transform.setCamera(pos, transform.target(), transform.up());
+	    zRot -= 0.1;
 	}
     }
     updateGL();
@@ -349,8 +326,8 @@ GLWidget::loadShaders(const char *vertex_file_path, const char *fragment_file_pa
     glGetProgramInfoLog(ProgramID, InfoLogLength, NULL, &ProgramErrorMessage[0]);
     fprintf(stdout, "%s\n", &ProgramErrorMessage[0]);
 
-    glDetachShader(programId, VertexShaderID);
-    glDetachShader(programId, FragmentShaderID);
+    glDetachShader(ProgramID, VertexShaderID);
+    glDetachShader(ProgramID, FragmentShaderID);
     
     glDeleteShader(VertexShaderID);
     glDeleteShader(FragmentShaderID);

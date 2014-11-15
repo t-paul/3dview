@@ -14,6 +14,10 @@
                    projectFiles="true">
       <itemPath>ui/GLWidget.ui</itemPath>
       <itemPath>ui/MainWindow.ui</itemPath>
+      <itemPath>resources/shader/shader.fs</itemPath>
+      <itemPath>resources/shader/shader.vs</itemPath>
+      <itemPath>resources/shader/simple.fs</itemPath>
+      <itemPath>resources/shader/simple.vs</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
@@ -35,15 +39,6 @@
                    kind="IMPORTANT_FILES_FOLDER">
       <itemPath>Makefile</itemPath>
     </logicalFolder>
-    <itemPath>resources/shader/basic.fs</itemPath>
-    <itemPath>resources/shader/basic.vs</itemPath>
-    <itemPath>resources/shader/simple.fs</itemPath>
-    <itemPath>resources/shader/simple.vs</itemPath>
-    <itemPath>resources/shader/tutorial.fs</itemPath>
-    <itemPath>resources/shader/tutorial.vs</itemPath>
-    <itemPath>resources/shader/vertex-lighting.fs</itemPath>
-    <itemPath>resources/shader/vertex-lighting.vs</itemPath>
-    <itemPath>resources/shader/voxel.fs</itemPath>
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -70,29 +65,13 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
-      <item path="resources/shader/basic.fs" ex="false" tool="3" flavor2="0">
+      <item path="resources/shader/shader.fs" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="resources/shader/basic.vs" ex="false" tool="3" flavor2="0">
+      <item path="resources/shader/shader.vs" ex="false" tool="3" flavor2="0">
       </item>
       <item path="resources/shader/simple.fs" ex="false" tool="3" flavor2="0">
       </item>
       <item path="resources/shader/simple.vs" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="resources/shader/tutorial.fs" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="resources/shader/tutorial.vs" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="resources/shader/vertex-lighting.fs"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="resources/shader/vertex-lighting.vs"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="resources/shader/voxel.fs" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/Mesh.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -141,29 +120,13 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
-      <item path="resources/shader/basic.fs" ex="false" tool="3" flavor2="0">
+      <item path="resources/shader/shader.fs" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="resources/shader/basic.vs" ex="false" tool="3" flavor2="0">
+      <item path="resources/shader/shader.vs" ex="false" tool="3" flavor2="0">
       </item>
       <item path="resources/shader/simple.fs" ex="false" tool="3" flavor2="0">
       </item>
       <item path="resources/shader/simple.vs" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="resources/shader/tutorial.fs" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="resources/shader/tutorial.vs" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="resources/shader/vertex-lighting.fs"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="resources/shader/vertex-lighting.vs"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="resources/shader/voxel.fs" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/Mesh.cpp" ex="false" tool="1" flavor2="0">
       </item>
