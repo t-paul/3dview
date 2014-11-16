@@ -220,13 +220,13 @@ GLWidget::keyPressEvent(QKeyEvent *event)
 {
     if (event->modifiers().testFlag(Qt::ShiftModifier)) {
 	if (event->key() == Qt::Key_Up) {
-	    y += 0.1;
+	    y += 1.0;
 	} else if (event->key() == Qt::Key_Down) {
-	    y -= 0.1;
+	    y -= 1.0;
 	} else if (event->key() == Qt::Key_Left) {
-	    x -= 0.1;
+	    x -= 1.0;
 	} else if (event->key() == Qt::Key_Right) {
-	    x += 0.1;
+	    x += 1.0;
 	}
     } else {
 	if (event->key() == Qt::Key_Plus) {
@@ -238,9 +238,12 @@ GLWidget::keyPressEvent(QKeyEvent *event)
 	} else if (event->key() == Qt::Key_Down) {
 	    xRot -= 0.1;
 	} else if (event->key() == Qt::Key_Left) {
-	    zRot += 0.1;
+	    yRot += 0.1;
 	} else if (event->key() == Qt::Key_Right) {
-	    zRot -= 0.1;
+	    yRot -= 0.1;
+	} else if (event->key() == Qt::Key_C) {
+	    x = 0;
+	    y = 0;
 	}
     }
     updateGL();
