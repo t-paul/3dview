@@ -146,7 +146,7 @@ void
 GLWidget::paintGL()
 {
     if (autoRotate) {
-	zRot += 0.01;
+	yRot += 0.01;
     }
     
     transform.setRotate(glm::vec3(xRot, yRot, zRot));
