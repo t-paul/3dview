@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <GL/glew.h>
+#include <QFileInfo>
 #include <QTextStream>
 
 #define GLM_FORCE_RADIANS
@@ -129,6 +130,16 @@ GLWidget::initializeGL()
     ProjectionID = glGetUniformLocation(programId, "Projection");
     LightPositionID = glGetUniformLocation(programId, "LightPosition");
     ShininessID = glGetUniformLocation(programId, "Shininess");
+
+    QStringList args = QCoreApplication::arguments();
+    if (args.size() > 1) {
+	QFileInfo fileInfo(args.at(1));
+	if (fileInfo.isFile()) {
+	    loadMesh(fileInfo.absoluteFilePath().toStdString());
+	}
+    } else {
+        loadMesh("/data/OpenSCAD/3dview/resources/meshes/UltimakerRobot_support.stl");
+    }
 }
 
 GLint

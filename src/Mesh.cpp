@@ -45,6 +45,8 @@ void quad(std::vector<float> &vertices, std::vector<float> &normals, int a, int 
 
 Mesh::Mesh(const std::string fileName) : fileName(fileName)
 {
+    vertexBuffer = -1;
+    normalBuffer = -1;
 }
 
 Mesh::~Mesh()
@@ -90,6 +92,9 @@ Mesh::bind()
     const struct aiNode* nd = scene->mRootNode;
     for (unsigned int n = 0; n < nd->mNumMeshes; ++n) {
 	const struct aiMesh* mesh = scene->mMeshes[nd->mMeshes[n]];
+	
+	std::cout << "vertices: " << mesh->mNumVertices << ", faces: " << mesh->mNumFaces << std::endl;
+	
 	for (unsigned int t = 0; t < mesh->mNumFaces; ++t) {
 	    const struct aiFace* face = &mesh->mFaces[t];
 	    switch (face->mNumIndices) {

@@ -14,16 +14,6 @@ MainWindow::MainWindow()
     specularIntensity = 0.6;
     specularPower = 80;
     updateGUI();
-    
-    QStringList args = QCoreApplication::arguments();
-    if (args.size() > 1) {
-	QFileInfo fileInfo(args.at(1));
-	if (fileInfo.isFile()) {
-	    ui.gl->loadMesh(fileInfo.absoluteFilePath().toStdString());
-	}
-    } else {
-        ui.gl->loadMesh("/data/OpenSCAD/3dview/resources/meshes/UltimakerRobot_support.stl");
-    }
 }
 
 MainWindow::~MainWindow()

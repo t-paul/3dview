@@ -15,6 +15,7 @@ class MainWindow : public QMainWindow {
 public:
     MainWindow();
     virtual ~MainWindow();
+    
 private:
     Ui::MainWindow ui;
     
@@ -33,10 +34,10 @@ private slots:
     void on_sliderRed_valueChanged(int value);
     void on_sliderGreen_valueChanged(int value);
     void on_sliderBlue_valueChanged(int value);
-    void on_sliderAmbientIntensity_valueChanged(int value);
-    void on_sliderDiffuseIntensity_valueChanged(int value);
-    void on_sliderSpecularIntensity_valueChanged(int value);
-    void on_sliderSpecularPower_valueChanged(int value);
+    void on_sliderAmbientIntensity_valueChanged(int);
+    void on_sliderDiffuseIntensity_valueChanged(int);
+    void on_sliderSpecularIntensity_valueChanged(int);
+    void on_sliderSpecularPower_valueChanged(int);
     void on_pushButtonAutoRotate_toggled(void);
 };
 
