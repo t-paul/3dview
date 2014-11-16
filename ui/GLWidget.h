@@ -46,6 +46,7 @@ private:
     float specularPower;
 
 private:
+    void initView();
     GLint getLocationId(GLuint program, const GLchar *name);
     GLuint loadShaders(const char * vertex_file_path, const char * fragment_file_path);
 

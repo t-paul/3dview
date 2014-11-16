@@ -5,6 +5,10 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#define GLM_FORCE_RADIANS
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 #include "Mesh.h"
 
 glm::vec4 positions[8] = {
@@ -67,8 +71,7 @@ Mesh::bind()
     const aiScene* scene = importer.ReadFile(fileName, aiProcess_CalcTangentSpace |
 	aiProcess_Triangulate |
 	aiProcess_GenNormals |
-	aiProcess_JoinIdenticalVertices |
-	aiProcess_SortByPType);
+	aiProcess_JoinIdenticalVertices);
 
     if (!scene) {
 	return;
@@ -97,9 +100,9 @@ Mesh::bind()
 		continue;
 	    }
 	    for (unsigned int idx= 0;idx < face->mNumIndices;idx++) {
-		float x = mesh->mVertices[idx].x;
-		float y = mesh->mVertices[idx].y;
-		float z = mesh->mVertices[idx].z;
+		float x = mesh->mVertices[face->mIndices[idx]].x;
+		float y = mesh->mVertices[face->mIndices[idx]].y;
+		float z = mesh->mVertices[face->mIndices[idx]].z;
 
 		if (x < min.x) {
 		    min.x = x;
@@ -119,9 +122,9 @@ Mesh::bind()
 		if (z > max.z) {
 		    max.z = z;
 		}
-		vertices.push_back(mesh->mVertices[face->mIndices[idx]].x);
-		vertices.push_back(mesh->mVertices[face->mIndices[idx]].y);
-		vertices.push_back(mesh->mVertices[face->mIndices[idx]].z);
+		vertices.push_back(x);
+		vertices.push_back(y);
+		vertices.push_back(z);
 		vertices.push_back(1.0f);
 		normals.push_back(mesh->mNormals[face->mIndices[idx]].x);
 		normals.push_back(mesh->mNormals[face->mIndices[idx]].y);
@@ -157,8 +160,25 @@ Mesh::bind()
     glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(float), &normals[0], GL_STATIC_DRAW);
 }
 
+glm::mat4
+Mesh::matrix() const
+{
+    glm::vec3 mid = -0.5f * (max + min);
+    
+    glm::vec3 diff = max - min;
+    float length = std::max(diff.x, std::max(diff.y, diff.z));
+    float factor = 50.0f / length;
+
+    glm::mat4 model;
+    model = glm::scale(model, glm::vec3(factor, factor, factor));
+    model = glm::translate(model, glm::vec3(mid.x, mid.z, -mid.y));
+    model = glm::rotate(model, (float)(-M_PI / 2.0f), glm::vec3(1.0, 0.0, 0.0));
+
+    return model;
+}
+
 void
-Mesh::draw(GLuint vertex, GLuint normal)
+Mesh::draw(GLuint vertex, GLuint normal) const
 {
     glEnableVertexAttribArray(vertex);
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);

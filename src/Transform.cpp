@@ -61,18 +61,14 @@ Transform::setUniformScale(float scale)
 glm::mat4
 Transform::matrix()
 {
-    glm::mat4 model = glm::mat4();
-    model = glm::translate(model, glm::vec3(0.0, 0.0, 0.0));
-    model = glm::rotate(model, rotate.z, glm::vec3(0.0, 0.0, 1.0));
-    model = glm::rotate(model, rotate.y, glm::vec3(0.0, 1.0, 0.0));
-    model = glm::rotate(model, rotate.x, glm::vec3(1.0, 0.0, 0.0));
-    
-    glm::mat4 view = glm::mat4();
+    glm::mat4 view;
+    //view = glm::translate(view, glm::vec3(0.0, 0.0, 0.0));
     view = glm::translate(view, translate);
-    view = glm::rotate(view, (float)(-M_PI / 2.0f), glm::vec3(1.0, 0.0, 0.0));
+    view = glm::rotate(view, rotate.z, glm::vec3(0.0, 0.0, 1.0));
+    view = glm::rotate(view, rotate.y, glm::vec3(0.0, 1.0, 0.0));
+    view = glm::rotate(view, rotate.x, glm::vec3(1.0, 0.0, 0.0));
     
-    glm::mat4 modelview = view * model;
-    return modelview;
+    return view;
 }
 
 glm::mat4

@@ -18,12 +18,7 @@ GLWidget::GLWidget(QWidget* parent) : QGLWidget(parent)
 {
     widget.setupUi(this);
 
-    scale = 1;
-    xRot = yRot = zRot = 0;
-    light_angle = 0;
-    x = y = 0;
-    distance = 50;
-    autoRotate = false;
+    initView();
 
     mesh = NULL;
     timer = new QTimer();
@@ -35,6 +30,17 @@ GLWidget::~GLWidget()
 {
     timer->stop();
     delete timer;
+}
+
+void
+GLWidget::initView()
+{
+    scale = 1;
+    xRot = yRot = zRot = 0;
+    light_angle = 0;
+    x = y = 0;
+    distance = 50;
+    autoRotate = false;
 }
 
 void
@@ -82,20 +88,8 @@ GLWidget::loadMesh(std::string filename)
     std::cout << "loadMesh: file: " << filename << std::endl;
     mesh = new Mesh(filename);
     mesh->bind();
-
-    float z = mesh->bboxMin().z;
-    float midx = mesh->bboxMin().x + (mesh->bboxMax().x - mesh->bboxMin().x) / 2;
-    float midy = mesh->bboxMin().y + (mesh->bboxMax().y - mesh->bboxMin().y) / 2;
-    
-    std::cout << "loadMesh: translate: " << midx << ", " << midy << ", " << z << std::endl;
-    x = -midx;
-    y = -midy;
-    distance = 2 * z;
-    
-    float camz = 1.5 * mesh->bboxMax().z;
-    float lookz = (mesh->bboxMax().z - mesh->bboxMin().z) / 2;
-    std::cout << "loadMesh: camera: Z = " << camz << ", look at: " << lookz << std::endl;
-    transform.setCamera(glm::vec3(-20.0f, -2 * camz, camz), glm::vec3(0.0f, 0.0f, lookz), glm::vec3(0.0f, 0.0f, 1.0f));
+    initView();
+    updateGL();
 }
 
 void
@@ -133,8 +127,6 @@ GLWidget::initializeGL()
     ProjectionID = glGetUniformLocation(programId, "Projection");
     LightPositionID = glGetUniformLocation(programId, "LightPosition");
     ShininessID = glGetUniformLocation(programId, "Shininess");
-
-    loadMesh("/data/OpenSCAD/3dview/resources/meshes/UltimakerRobot_support.stl");
 }
 
 GLint
@@ -170,12 +162,14 @@ GLWidget::paintGL()
     glUniform4fv(LightPositionID, 1, glm::value_ptr(light_pos));
     glUniform1f(ShininessID, specularPower);
 
-    glUniformMatrix4fv(ProjectionID, 1, GL_FALSE, glm::value_ptr(transform.projection()));
-    glUniformMatrix4fv(ModelViewID, 1, GL_FALSE, glm::value_ptr(transform.matrix()));
 
-    GLuint vPosition = glGetAttribLocation(programId, "vPosition");
-    GLuint vNormal = glGetAttribLocation(programId, "vNormal");
     if (mesh) {
+	glUniformMatrix4fv(ProjectionID, 1, GL_FALSE, glm::value_ptr(transform.projection()));
+	glm::mat4 modelview = transform.matrix() * mesh->matrix();
+	glUniformMatrix4fv(ModelViewID, 1, GL_FALSE, glm::value_ptr(modelview));
+
+	GLuint vPosition = glGetAttribLocation(programId, "vPosition");
+	GLuint vNormal = glGetAttribLocation(programId, "vNormal");
         mesh->draw(vPosition, vNormal);
     }
 }
@@ -208,7 +202,7 @@ GLWidget::mouseMoveEvent(QMouseEvent *event)
     int dy = event->y() - lastMousePos.y();
 
     if (event->buttons() & Qt::LeftButton) {
-	zRot += (float)dx / -100.0f;
+	yRot += (float)dx / -100.0f;
 	xRot += (float)dy / -100.0f;
     } else if (event->buttons() & Qt::RightButton) {
 	x += (float)dx / 10.0f;
@@ -224,11 +218,13 @@ GLWidget::keyPressEvent(QKeyEvent *event)
 {
     if (event->modifiers().testFlag(Qt::ShiftModifier)) {
 	if (event->key() == Qt::Key_Up) {
-	    yRot += 0.1;
+	    y += 0.1;
 	} else if (event->key() == Qt::Key_Down) {
-	    yRot -= 0.1;
+	    y -= 0.1;
 	} else if (event->key() == Qt::Key_Left) {
+	    x -= 0.1;
 	} else if (event->key() == Qt::Key_Right) {
+	    x += 0.1;
 	}
     } else {
 	if (event->key() == Qt::Key_Plus) {

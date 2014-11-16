@@ -12,6 +12,7 @@ MainWindow::MainWindow()
     specularIntensity = 0.6;
     specularPower = 80;
     updateGUI();
+    ui.gl->loadMesh("/data/OpenSCAD/3dview/resources/meshes/UltimakerRobot_support.stl");
 }
 
 MainWindow::~MainWindow()

@@ -9,7 +9,8 @@ public:
     virtual ~Mesh();
     
     void bind();
-    void draw(GLuint vertex, GLuint normal);
+    glm::mat4 matrix() const;
+    void draw(GLuint vertex, GLuint normal) const;
     
     const glm::vec3 & bboxMin();
     const glm::vec3 & bboxMax();
