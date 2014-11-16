@@ -17,6 +17,8 @@
    <string>GLWidget</string>
   </property>
  </widget>
- <resources/>
+ <resources>
+  <include location="../resources/3dview.qrc"/>
+ </resources>
  <connections/>
 </ui>

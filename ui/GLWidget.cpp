@@ -3,12 +3,14 @@
 #include <iostream>
 #include <fstream>
 #include <GL/glew.h>
+#include <QTextStream>
 
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/rotate_vector.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <qt5/QtCore/qstring.h>
 
 #define BUFFER_OFFSET(offset) ((void *)(offset))
 
@@ -251,25 +253,18 @@ GLWidget::loadShaders(const char *vertex_file_path, const char *fragment_file_pa
     GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
     GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
 
-    // Read the Vertex Shader code from the file
     std::string VertexShaderCode;
-    std::ifstream VertexShaderStream(vertex_file_path, std::ios::in);
-    if(VertexShaderStream.is_open())
-    {
-        std::string Line = "";
-        while(getline(VertexShaderStream, Line))
-            VertexShaderCode += "\n" + Line;
-        VertexShaderStream.close();
+    QFile vertexResource(QString(":/") + vertex_file_path);
+    if (vertexResource.open(QFile::ReadOnly | QFile::Text)) {
+	QTextStream vertexStream(&vertexResource);
+	VertexShaderCode = vertexStream.readAll().toStdString();
     }
 
-    // Read the Fragment Shader code from the file
     std::string FragmentShaderCode;
-    std::ifstream FragmentShaderStream(fragment_file_path, std::ios::in);
-    if(FragmentShaderStream.is_open()){
-        std::string Line = "";
-        while(getline(FragmentShaderStream, Line))
-            FragmentShaderCode += "\n" + Line;
-        FragmentShaderStream.close();
+    QFile fragmentResource(QString(":/") + fragment_file_path);
+    if (fragmentResource.open(QFile::ReadOnly | QFile::Text)) {
+	QTextStream fragmentStream(&fragmentResource);
+	FragmentShaderCode = fragmentStream.readAll().toStdString();
     }
 
     GLint Result = GL_FALSE;

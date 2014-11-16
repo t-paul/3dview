@@ -5,3 +5,5 @@ moc_*.cpp
 .dep.inc
 /ui/ui_*.h
 /ui_*.h
+/qrc_3dview.cpp
+/src/qrc_3dview.cpp

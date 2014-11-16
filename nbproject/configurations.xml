@@ -12,6 +12,7 @@
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
                    projectFiles="true">
+      <itemPath>resources/3dview.qrc</itemPath>
       <itemPath>ui/GLWidget.ui</itemPath>
       <itemPath>ui/MainWindow.ui</itemPath>
       <itemPath>resources/shader/shader.fs</itemPath>
@@ -50,6 +51,7 @@
       </toolsSet>
       <qt>
         <modules>core gui widgets opengl</modules>
+        <rccDir>src</rccDir>
         <uiDir>ui</uiDir>
       </qt>
       <compileType>
@@ -65,6 +67,8 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
+      <item path="resources/3dview.qrc" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="resources/shader/shader.fs" ex="false" tool="3" flavor2="0">
       </item>
       <item path="resources/shader/shader.vs" ex="false" tool="3" flavor2="0">
@@ -120,6 +124,8 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
+      <item path="resources/3dview.qrc" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="resources/shader/shader.fs" ex="false" tool="3" flavor2="0">
       </item>
       <item path="resources/shader/shader.vs" ex="false" tool="3" flavor2="0">
