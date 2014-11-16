@@ -21,21 +21,23 @@ private:
     float zRot;
     float scale;
     float light_angle;
+    float x;
+    float y;
     float distance;
+    bool autoRotate;
     QPoint lastMousePos;
     QTimer *timer;
-    
+
     GLuint programId;
     GLuint vao;
-GLuint AmbientProductID, DiffuseProductID, SpecularProductID;
-GLuint ModelViewID;
-GLuint ProjectionID;
-GLuint LightPositionID;
-GLuint ShininessID;
+    GLuint AmbientProductID, DiffuseProductID, SpecularProductID;
+    GLuint ModelViewID;
+    GLuint ProjectionID;
+    GLuint LightPositionID;
+    GLuint ShininessID;
 
     Transform transform;
     Mesh *mesh;
-    float tick;
     
     QColor color;
     float ambientIntensity;
@@ -52,6 +54,7 @@ private slots:
 
 public:
     void setColor(QColor color);
+    void setAutoRotate(bool autoRotate);
     void setIntensity(float ambientIntensity, float diffuseIntensity, float specularIntensity, float specularPower);
     void loadMesh(std::string filename);
     

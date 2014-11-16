@@ -9,8 +9,8 @@ MainWindow::MainWindow()
     color = QColor(200, 20, 20);
     ambientIntensity = 0.3;
     diffuseIntensity = 0.5;
-    specularIntensity = 0.8;
-    specularPower = 32;
+    specularIntensity = 0.6;
+    specularPower = 80;
     updateGUI();
 }
 
@@ -86,6 +86,12 @@ MainWindow::on_sliderSpecularPower_valueChanged(int value)
 {
     specularPower = (float)value;
     updateGL();
+}
+
+void
+MainWindow::on_pushButtonAutoRotate_toggled(void)
+{
+    ui.gl->setAutoRotate(ui.pushButtonAutoRotate->isChecked());
 }
 
 void

@@ -19,6 +19,7 @@ public:
     glm::vec3 pos();
     glm::vec3 target();
     glm::mat4 matrix();
+    glm::mat4 projection();
     
 private:
     float width;

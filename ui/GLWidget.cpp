@@ -18,11 +18,12 @@ GLWidget::GLWidget(QWidget* parent) : QGLWidget(parent)
 {
     widget.setupUi(this);
 
-    tick = 0;
     scale = 1;
     xRot = yRot = zRot = 0;
     light_angle = 0;
+    x = y = 0;
     distance = 50;
+    autoRotate = false;
 
     mesh = NULL;
     timer = new QTimer();
@@ -47,6 +48,16 @@ GLWidget::setColor(QColor color)
 {
     this->color = color;
     updateGL();
+}
+
+void
+GLWidget::setAutoRotate(bool autoRotate)
+{
+    timer->stop();
+    if (autoRotate) {
+	timer->start(20);
+    }
+    this->autoRotate = autoRotate;
 }
 
 void
@@ -77,14 +88,14 @@ GLWidget::loadMesh(std::string filename)
     float midy = mesh->bboxMin().y + (mesh->bboxMax().y - mesh->bboxMin().y) / 2;
     
     std::cout << "loadMesh: translate: " << midx << ", " << midy << ", " << z << std::endl;
-    transform.setTranslate(glm::vec3(-midx, -midy, -z));
+    x = -midx;
+    y = -midy;
+    distance = 2 * z;
     
     float camz = 1.5 * mesh->bboxMax().z;
     float lookz = (mesh->bboxMax().z - mesh->bboxMin().z) / 2;
     std::cout << "loadMesh: camera: Z = " << camz << ", look at: " << lookz << std::endl;
     transform.setCamera(glm::vec3(-20.0f, -2 * camz, camz), glm::vec3(0.0f, 0.0f, lookz), glm::vec3(0.0f, 0.0f, 1.0f));
-    
-    //timer->start(20);
 }
 
 void
@@ -140,43 +151,33 @@ GLWidget::getLocationId(GLuint program, const GLchar *name)
 void
 GLWidget::paintGL()
 {
+    if (autoRotate) {
+	zRot += 0.01;
+    }
+    
+    transform.setRotate(glm::vec3(xRot, yRot, zRot));
+    transform.setTranslate(glm::vec3(x, y, -distance));
+    
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    tick += 0.01;
 
     glValidateProgram(programId);
     glUseProgram(programId);
 
-    glUniform4f(AmbientProductID, 0.0, 0.0, 0.6, 1.0);
-    glUniform4f(DiffuseProductID, 0.4, 0.4, 0.4, 1.0);
-    glUniform4f(SpecularProductID, 0.8, 0.8, 0.8, 1.0);
+    glUniform4f(AmbientProductID, ambientIntensity * color.redF(), ambientIntensity * color.greenF(), ambientIntensity * color.blueF(), 1.0);
+    glUniform4f(DiffuseProductID, diffuseIntensity, diffuseIntensity, diffuseIntensity, 1.0);
+    glUniform4f(SpecularProductID, specularIntensity, specularIntensity, specularIntensity, 1.0);
     glm::vec4 light_pos = glm::vec4(glm::rotateZ(glm::vec3(50.0, 50.0, 200.0), light_angle), 1.0);
     glUniform4fv(LightPositionID, 1, glm::value_ptr(light_pos));
-    glUniform1f(ShininessID, 64.0);
+    glUniform1f(ShininessID, specularPower);
 
-    float fov = M_PI * 75.0 / 180.0;
-    glm::mat4 Projection = glm::perspective(fov, 1.0f, 1.0f, 10000.0f);
-    glUniformMatrix4fv(ProjectionID, 1, GL_FALSE, glm::value_ptr(Projection));
-
-    glm::mat4 model = glm::mat4();
-    model = glm::translate(model, glm::vec3(0.0, 0.0, 0.0));
-    model = glm::rotate(model, zRot, glm::vec3(0.0, 0.0, 1.0));
-    model = glm::rotate(model, yRot, glm::vec3(0.0, 1.0, 0.0));
-    model = glm::rotate(model, xRot, glm::vec3(1.0, 0.0, 0.0));
-    
-    glm::mat4 view = glm::mat4();
-    view = glm::translate(view, glm::vec3(0.0, -20.0, -distance));
-    view = glm::rotate(view, (float)(-M_PI / 2.0f), glm::vec3(1.0, 0.0, 0.0));
-    
-    glm::mat4 modelview = view * model;
-    glUniformMatrix4fv(ModelViewID, 1, GL_FALSE, glm::value_ptr(modelview));
+    glUniformMatrix4fv(ProjectionID, 1, GL_FALSE, glm::value_ptr(transform.projection()));
+    glUniformMatrix4fv(ModelViewID, 1, GL_FALSE, glm::value_ptr(transform.matrix()));
 
     GLuint vPosition = glGetAttribLocation(programId, "vPosition");
     GLuint vNormal = glGetAttribLocation(programId, "vNormal");
     if (mesh) {
         mesh->draw(vPosition, vNormal);
     }
-
 }
 
 void
@@ -189,10 +190,8 @@ GLWidget::resizeGL(int width, int height)
 void
 GLWidget::wheelEvent(QWheelEvent *e)
 {
-    float inc = e->delta() > 0 ? 0.1 : -0.1;
-    glm::vec3 look = transform.target() - transform.pos();
-    glm::vec3 pos = glm::vec3(glm::translate(inc * look) * glm::vec4(transform.pos(), 1));
-    transform.setCamera(pos, transform.target(), transform.up());
+    float factor = e->delta() > 0 ? 0.9 : 1.1;
+    distance *= factor;
     updateGL();
 }
 
@@ -209,15 +208,11 @@ GLWidget::mouseMoveEvent(QMouseEvent *event)
     int dy = event->y() - lastMousePos.y();
 
     if (event->buttons() & Qt::LeftButton) {
-	glm::vec3 pos = glm::rotateZ(transform.pos(), (float)dx / -50.0f);
-	
-	glm::vec3 look = transform.target() - pos;
-	glm::vec3 axis = glm::cross(look, transform.up());
-	//std::cout << "axis: " << axis.x << ", " << axis.y << ", " << axis.z << std::endl;
-	glm::vec3 pos2 = glm::rotate(pos, (float)dy / -50.0f, axis);
-	transform.setCamera(pos2, transform.target(), transform.up());
+	zRot += (float)dx / -100.0f;
+	xRot += (float)dy / -100.0f;
     } else if (event->buttons() & Qt::RightButton) {
-	//transform.setCamera(transform.pos() + ((transform.pos() - transform.target()) * 0.01f * (float)dy), transform.target(), transform.up());
+	x += (float)dx / 10.0f;
+	y -= (float)dy / 10.0f;
     }
 
     updateGL();
@@ -227,8 +222,6 @@ GLWidget::mouseMoveEvent(QMouseEvent *event)
 void
 GLWidget::keyPressEvent(QKeyEvent *event)
 {
-    float angle = (float)M_PI/90.0f;
-    
     if (event->modifiers().testFlag(Qt::ShiftModifier)) {
 	if (event->key() == Qt::Key_Up) {
 	    yRot += 0.1;

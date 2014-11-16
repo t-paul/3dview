@@ -61,15 +61,26 @@ Transform::setUniformScale(float scale)
 glm::mat4
 Transform::matrix()
 {
-    glm::mat4 p = glm::perspectiveFov(.52f, width, height, 1.0f, 100000.0f);
-    glm::mat4 c = glm::lookAt(cam_pos, cam_target, cam_up);
+    glm::mat4 model = glm::mat4();
+    model = glm::translate(model, glm::vec3(0.0, 0.0, 0.0));
+    model = glm::rotate(model, rotate.z, glm::vec3(0.0, 0.0, 1.0));
+    model = glm::rotate(model, rotate.y, glm::vec3(0.0, 1.0, 0.0));
+    model = glm::rotate(model, rotate.x, glm::vec3(1.0, 0.0, 0.0));
     
-    glm::mat4 t = glm::translate(glm::mat4(), translate);
-    glm::mat4 s = glm::scale(t, scale);
-    glm::mat4 rx = glm::rotate(s, rotate.x, glm::vec3(1, 0, 0));
-    glm::mat4 ry = glm::rotate(rx, rotate.y, glm::vec3(0, 1, 0));
-    glm::mat4 rz = glm::rotate(ry, rotate.z, glm::vec3(0, 0, 1));
-    return p * c * rz;
+    glm::mat4 view = glm::mat4();
+    view = glm::translate(view, translate);
+    view = glm::rotate(view, (float)(-M_PI / 2.0f), glm::vec3(1.0, 0.0, 0.0));
+    
+    glm::mat4 modelview = view * model;
+    return modelview;
+}
+
+glm::mat4
+Transform::projection()
+{
+    float fov = M_PI * 75.0 / 180.0;
+    glm::mat4 projection = glm::perspectiveFov(fov, width, height, 1.0f, 10000.0f);
+    return projection;
 }
 
 glm::vec3

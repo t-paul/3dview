@@ -37,6 +37,7 @@ private slots:
     void on_sliderDiffuseIntensity_valueChanged(int value);
     void on_sliderSpecularIntensity_valueChanged(int value);
     void on_sliderSpecularPower_valueChanged(int value);
+    void on_pushButtonAutoRotate_toggled(void);
 };
 
 #endif	/* _MAINWINDOW_H */
