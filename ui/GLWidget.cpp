@@ -24,7 +24,9 @@ GLWidget::GLWidget(QWidget* parent) : QGLWidget(parent)
 
     mesh = NULL;
     timer = new QTimer();
+    repaintTimer = new QTimer();
     connect(timer, SIGNAL(timeout()), this, SLOT(onTimer()));
+    connect(repaintTimer, SIGNAL(timeout()), this, SLOT(onTimer()));
     setFocus();
 }
 
@@ -184,6 +186,7 @@ GLWidget::paintGL()
 	GLuint vNormal = glGetAttribLocation(programId, "vNormal");
         mesh->draw(vPosition, vNormal);
     }
+    elapsed.restart();
 }
 
 void
@@ -210,6 +213,8 @@ GLWidget::mousePressEvent(QMouseEvent *event)
 void
 GLWidget::mouseMoveEvent(QMouseEvent *event)
 {
+    repaintTimer->stop();
+
     int dx = event->x() - lastMousePos.x();
     int dy = event->y() - lastMousePos.y();
 
@@ -221,8 +226,13 @@ GLWidget::mouseMoveEvent(QMouseEvent *event)
 	y -= (float)dy / 10.0f;
     }
 
-    updateGL();
     lastMousePos = event->pos();
+    
+    if (elapsed.elapsed() > 50) {
+	updateGL();
+    } else {
+        repaintTimer->start(50);
+    }
 }
 
 void

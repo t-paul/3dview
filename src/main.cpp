@@ -16,6 +16,8 @@ int main(int argc, char *argv[])
     QGLFormat fmt;
     fmt.setProfile(QGLFormat::CoreProfile);
     fmt.setVersion(3,2);
+    // see https://bugreports.qt-project.org/browse/QTBUG-39370
+    // fmt.setSwapInterval(0);
     QGLFormat::setDefaultFormat(fmt);
 
     // create and show your widgets here

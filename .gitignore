@@ -1,3 +1,5 @@
+3dview
+3dview_automoc.cpp
 build
 dist
 nbproject/private
@@ -7,3 +9,10 @@ moc_*.cpp
 /ui_*.h
 /qrc_3dview.cpp
 /src/qrc_3dview.cpp
+/CMakeCache.txt
+/CMakeFiles
+/nbproject
+/Makefile
+/cmake_install.cmake
+/compile_commands.json
+/resources/*.depends

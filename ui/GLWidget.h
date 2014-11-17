@@ -4,6 +4,7 @@
 #include <QTimer>
 #include <QGLWidget>
 #include <QMouseEvent>
+#include <QElapsedTimer>
 
 #include "Mesh.h"
 #include "Transform.h"
@@ -27,6 +28,8 @@ private:
     bool autoRotate;
     QPoint lastMousePos;
     QTimer *timer;
+    QTimer *repaintTimer;
+    QElapsedTimer elapsed;
 
     GLuint programId;
     GLuint vao;
