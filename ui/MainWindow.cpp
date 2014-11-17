@@ -8,11 +8,11 @@ MainWindow::MainWindow()
 {
     ui.setupUi(this);
     
-    color = QColor(200, 20, 20);
-    ambientIntensity = 0.3;
+    color = QColor(200, 176, 18);
+    ambientIntensity = 0.4;
     diffuseIntensity = 0.5;
-    specularIntensity = 0.6;
-    specularPower = 80;
+    specularIntensity = 0.5;
+    specularPower = 128;
     updateGUI();
 }
 
