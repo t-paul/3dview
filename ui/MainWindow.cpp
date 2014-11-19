@@ -91,6 +91,13 @@ MainWindow::on_sliderSpecularPower_valueChanged(int value)
 }
 
 void
+MainWindow::on_sliderNormalLength_valueChanged(int value)
+{
+    normalLength = std::exp((float)value / 100.0f) - 1;
+    updateGL();
+}
+
+void
 MainWindow::on_pushButtonAutoRotate_toggled(void)
 {
     ui.gl->setAutoRotate(ui.pushButtonAutoRotate->isChecked());
@@ -106,6 +113,7 @@ MainWindow::updateGUI()
     ui.sliderDiffuseIntensity->setValue(diffuseIntensity * 100);
     ui.sliderSpecularIntensity->setValue(specularIntensity * 100);
     ui.sliderSpecularPower->setValue(specularPower);
+    ui.sliderNormalLength->setValue(std::log(normalLength + 1) * 100);
 }
 
 void
@@ -118,10 +126,13 @@ MainWindow::updateGL()
     ui.labelDiffuseIntensityDisplay->setText(QString::number(diffuseIntensity, 'f', 2));
     ui.labelSpecularIntensityDisplay->setText(QString::number(specularIntensity, 'f', 2));
     ui.labelSpecularPowerDisplay->setText(QString::number(specularPower, 'f', 0));
+    ui.labelNormalLengthDisplay->setText(QString::number(normalLength, 'f', 2));
     
     QPalette palette = ui.labelColorDisplay->palette();
     palette.setColor(ui.labelColorDisplay->backgroundRole(), color);
     ui.labelColorDisplay->setPalette(palette);
     ui.gl->setColor(color);
+    ui.gl->setNormalLength(normalLength);
     ui.gl->setIntensity(ambientIntensity, diffuseIntensity, specularIntensity, specularPower);
+    ui.gl->postUpdate();
 }

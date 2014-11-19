@@ -5,6 +5,7 @@
 #include <QGLWidget>
 #include <QMouseEvent>
 #include <QElapsedTimer>
+#include <QGLShaderProgram>
 
 #include "Mesh.h"
 #include "Transform.h"
@@ -31,13 +32,7 @@ private:
     QTimer *repaintTimer;
     QElapsedTimer elapsed;
 
-    GLuint programId;
     GLuint vao;
-    GLuint AmbientProductID, DiffuseProductID, SpecularProductID;
-    GLuint ModelViewID;
-    GLuint ProjectionID;
-    GLuint LightPositionID;
-    GLuint ShininessID;
 
     Transform transform;
     Mesh *mesh;
@@ -47,18 +42,25 @@ private:
     float diffuseIntensity;
     float specularIntensity;
     float specularPower;
+    float normalLength;
+    
+    QGLShaderProgram shader1;
+    QGLShaderProgram shader2;
 
 private:
     void initView();
-    GLint getLocationId(GLuint program, const GLchar *name);
-    GLuint loadShaders(const char * vertex_file_path, const char * fragment_file_path);
+    void setAttributes(QGLShaderProgram &);
+    void loadShader(QGLShaderProgram &shader, const QGLShader::ShaderType type, const QString name);
+    void loadShaders(QGLShaderProgram &shader, const QString name);
 
 private slots:
     void onTimer();
 
 public:
+    void postUpdate();
     void setColor(QColor color);
     void setAutoRotate(bool autoRotate);
+    void setNormalLength(float normalLength);
     void setIntensity(float ambientIntensity, float diffuseIntensity, float specularIntensity, float specularPower);
     void loadMesh(std::string filename);
     

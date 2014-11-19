@@ -1,11 +1,11 @@
-// #version 330 core
+#version 150
 
-varying vec3 normal;
+out vec4 fragColor;
 
 void main(){
-    if (normal.z > 0.0) {
-        gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+    if (gl_FrontFacing) {
+        fragColor = vec4(0.0, 0.5, 0.0, 1.0);
     } else {
-        gl_FragColor = vec4(0.0, 0.5, 0.0, 1.0);
+        fragColor = vec4(1.0, 0.0, 0.0, 1.0);
     }
 }

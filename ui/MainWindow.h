@@ -23,6 +23,7 @@ private:
     float diffuseIntensity;
     float specularIntensity;
     float specularPower;
+    float normalLength;
     QColor color;
     
     void updateGUI();
@@ -38,6 +39,7 @@ private slots:
     void on_sliderDiffuseIntensity_valueChanged(int);
     void on_sliderSpecularIntensity_valueChanged(int);
     void on_sliderSpecularPower_valueChanged(int);
+    void on_sliderNormalLength_valueChanged(int);
     void on_pushButtonAutoRotate_toggled(void);
 };
 

@@ -3,7 +3,7 @@
 in vec4 Position;
 in vec4 Normal;
 
-out vec4 fColor;
+out vec4 fragColor;
 
 uniform vec4 AmbientProduct;
 uniform vec4 DiffuseProduct;
@@ -35,5 +35,9 @@ void main()
         specular = vec4(0.0, 0.0, 0.0, 1.0);
     }
 
-    fColor = ambient + diffuse + specular;
+    if (gl_FrontFacing) {
+        fragColor = ambient + diffuse + specular;
+    } else {
+        fragColor = vec4(0.5, 0.1, 0.1, 1.0) + diffuse;
+    }
 }

@@ -57,7 +57,6 @@ void
 GLWidget::setColor(QColor color)
 {
     this->color = color;
-    updateGL();
 }
 
 void
@@ -77,7 +76,19 @@ GLWidget::setIntensity(float ambientIntensity, float diffuseIntensity, float spe
     this->diffuseIntensity = diffuseIntensity;
     this->specularIntensity = specularIntensity;
     this->specularPower = specularPower;
-    updateGL();
+}
+
+void
+GLWidget::setNormalLength(float normalLength)
+{
+    this->normalLength = normalLength;
+}
+
+void
+GLWidget::postUpdate()
+{
+    repaintTimer->stop();
+    repaintTimer->start(20);
 }
 
 void
@@ -119,18 +130,12 @@ GLWidget::initializeGL()
     qglClearColor(QColor(0xfd, 0xf6, 0xe3));
 
     glEnable(GL_DEPTH_TEST);
+
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
     
-    programId = loadShaders("resources/shader/shader.vs", "resources/shader/shader.fs");
-
-    AmbientProductID = glGetUniformLocation(programId, "AmbientProduct");
-    DiffuseProductID = glGetUniformLocation(programId, "DiffuseProduct");
-    SpecularProductID = glGetUniformLocation(programId, "SpecularProduct");
-    ModelViewID = glGetUniformLocation(programId, "ModelView");
-    ProjectionID = glGetUniformLocation(programId, "Projection");
-    LightPositionID = glGetUniformLocation(programId, "LightPosition");
-    ShininessID = glGetUniformLocation(programId, "Shininess");
+    loadShaders(shader1, "shader");
+    loadShaders(shader2, "geometry");
 
     QStringList args = QCoreApplication::arguments();
     if (args.size() > 1) {
@@ -143,15 +148,24 @@ GLWidget::initializeGL()
     }
 }
 
-GLint
-GLWidget::getLocationId(GLuint program, const GLchar *name)
+void
+GLWidget::setAttributes(QGLShaderProgram & shader)
 {
-    GLint id = glGetUniformLocation(program, name);
-    if (id < 0) {
-	std::cout << "location: " << name << " - " << id << std::endl;
-	exit(1);
-    }
-    return id;
+    shader.bind();
+    
+    glm::vec4 light_pos = glm::vec4(glm::rotateZ(glm::vec3(50.0, 50.0, 200.0), light_angle), 1.0);
+    
+    shader.setUniformValue("AmbientProduct", ambientIntensity * color.redF(), ambientIntensity * color.greenF(), ambientIntensity * color.blueF(), 1.0);
+    shader.setUniformValue("DiffuseProduct", diffuseIntensity, diffuseIntensity, diffuseIntensity, 1.0);
+    shader.setUniformValue("SpecularProduct", specularIntensity, specularIntensity, specularIntensity, 1.0);
+    shader.setUniformValue("LightPosition", light_pos.x, light_pos.y, light_pos.z, light_pos.w);
+    shader.setUniformValue("Shininess", specularPower);
+    shader.setUniformValue("NormalLength", normalLength);
+
+    shader.setUniformValue("Projection", QMatrix4x4(glm::value_ptr(transform.projection())).transposed());
+
+    glm::mat4 modelview = transform.matrix() * mesh->matrix();
+    shader.setUniformValue("ModelView", QMatrix4x4(glm::value_ptr(modelview)).transposed());
 }
 
 void
@@ -166,26 +180,16 @@ GLWidget::paintGL()
     
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glValidateProgram(programId);
-    glUseProgram(programId);
-
-    glUniform4f(AmbientProductID, ambientIntensity * color.redF(), ambientIntensity * color.greenF(), ambientIntensity * color.blueF(), 1.0);
-    glUniform4f(DiffuseProductID, diffuseIntensity, diffuseIntensity, diffuseIntensity, 1.0);
-    glUniform4f(SpecularProductID, specularIntensity, specularIntensity, specularIntensity, 1.0);
-    glm::vec4 light_pos = glm::vec4(glm::rotateZ(glm::vec3(50.0, 50.0, 200.0), light_angle), 1.0);
-    glUniform4fv(LightPositionID, 1, glm::value_ptr(light_pos));
-    glUniform1f(ShininessID, specularPower);
-
-
+    setAttributes(shader1);
     if (mesh) {
-	glUniformMatrix4fv(ProjectionID, 1, GL_FALSE, glm::value_ptr(transform.projection()));
-	glm::mat4 modelview = transform.matrix() * mesh->matrix();
-	glUniformMatrix4fv(ModelViewID, 1, GL_FALSE, glm::value_ptr(modelview));
-
-	GLuint vPosition = glGetAttribLocation(programId, "vPosition");
-	GLuint vNormal = glGetAttribLocation(programId, "vNormal");
-        mesh->draw(vPosition, vNormal);
+        mesh->draw(shader1.attributeLocation("vPosition"), shader1.attributeLocation("vNormal"));
     }
+    
+    setAttributes(shader2);
+    if (mesh) {
+        mesh->draw(shader2.attributeLocation("vPosition"), shader1.attributeLocation("vNormal"));
+    }
+    
     elapsed.restart();
 }
 
@@ -269,75 +273,29 @@ GLWidget::keyPressEvent(QKeyEvent *event)
     updateGL();
 }
 
-GLuint
-GLWidget::loadShaders(const char *vertex_file_path, const char *fragment_file_path)
+void
+GLWidget::loadShader(QGLShaderProgram & shader, const QGLShader::ShaderType type, const QString name)
 {
-    // Create the shaders
-    GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
-    GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
-
-    std::string VertexShaderCode;
-    QFile vertexResource(QString(":/") + vertex_file_path);
-    if (vertexResource.open(QFile::ReadOnly | QFile::Text)) {
-	QTextStream vertexStream(&vertexResource);
-	VertexShaderCode = vertexStream.readAll().toStdString();
+    QFile resource(name);
+    if (resource.open(QFile::ReadOnly | QFile::Text)) {
+	QTextStream stream(&resource);
+	QString shaderSource = stream.readAll().trimmed();
+	if (!shaderSource.isEmpty()) {
+	    if (shader.addShaderFromSourceCode(type, shaderSource)) {
+		std::cout << "Added shader source for type " << type << std::endl;
+	    } else {
+		std::cout << "Failed to add shader source for type " << type << std::endl;
+	    }
+	}
     }
+}
 
-    std::string FragmentShaderCode;
-    QFile fragmentResource(QString(":/") + fragment_file_path);
-    if (fragmentResource.open(QFile::ReadOnly | QFile::Text)) {
-	QTextStream fragmentStream(&fragmentResource);
-	FragmentShaderCode = fragmentStream.readAll().toStdString();
-    }
-
-    GLint Result = GL_FALSE;
-    int InfoLogLength;
-
-    // Compile Vertex Shader
-    printf("Compiling shader : %s\n", vertex_file_path);
-    char const * VertexSourcePointer = VertexShaderCode.c_str();
-    glShaderSource(VertexShaderID, 1, &VertexSourcePointer , NULL);
-    glCompileShader(VertexShaderID);
-
-    // Check Vertex Shader
-    glGetShaderiv(VertexShaderID, GL_COMPILE_STATUS, &Result);
-    glGetShaderiv(VertexShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
-    std::vector<char> VertexShaderErrorMessage(InfoLogLength);
-    glGetShaderInfoLog(VertexShaderID, InfoLogLength, NULL, &VertexShaderErrorMessage[0]);
-    fprintf(stdout, "%s\n", &VertexShaderErrorMessage[0]);
-
-    // Compile Fragment Shader
-    printf("Compiling shader : %s\n", fragment_file_path);
-    char const * FragmentSourcePointer = FragmentShaderCode.c_str();
-    glShaderSource(FragmentShaderID, 1, &FragmentSourcePointer , NULL);
-    glCompileShader(FragmentShaderID);
-
-    // Check Fragment Shader
-    glGetShaderiv(FragmentShaderID, GL_COMPILE_STATUS, &Result);
-    glGetShaderiv(FragmentShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
-    std::vector<char> FragmentShaderErrorMessage(InfoLogLength);
-    glGetShaderInfoLog(FragmentShaderID, InfoLogLength, NULL, &FragmentShaderErrorMessage[0]);
-    fprintf(stdout, "%s\n", &FragmentShaderErrorMessage[0]);
-
-    // Link the program
-    fprintf(stdout, "Linking program\n");
-    GLuint ProgramID = glCreateProgram();
-    glAttachShader(ProgramID, VertexShaderID);
-    glAttachShader(ProgramID, FragmentShaderID);
-    glLinkProgram(ProgramID);
-
-    // Check the program
-    glGetProgramiv(ProgramID, GL_LINK_STATUS, &Result);
-    glGetProgramiv(ProgramID, GL_INFO_LOG_LENGTH, &InfoLogLength);
-    std::vector<char> ProgramErrorMessage(std::max(InfoLogLength, int(1)) );
-    glGetProgramInfoLog(ProgramID, InfoLogLength, NULL, &ProgramErrorMessage[0]);
-    fprintf(stdout, "%s\n", &ProgramErrorMessage[0]);
-
-    glDetachShader(ProgramID, VertexShaderID);
-    glDetachShader(ProgramID, FragmentShaderID);
-    
-    glDeleteShader(VertexShaderID);
-    glDeleteShader(FragmentShaderID);
-
-    return ProgramID;
+void
+GLWidget::loadShaders(QGLShaderProgram & shader, const QString name)
+{
+    QString path = QString(":/resources/shader/") + name;
+    loadShader(shader, QGLShader::Vertex, path + ".vs");
+    loadShader(shader, QGLShader::Fragment, path + ".fs");
+    loadShader(shader, QGLShader::Geometry, path + ".gs");
+    shader.link();
 }

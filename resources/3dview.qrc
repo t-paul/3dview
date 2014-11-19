@@ -1,6 +1,12 @@
 <RCC>
-  <qresource>
-    <file>../resources/shader/shader.fs</file>
-    <file>../resources/shader/shader.vs</file>
+  <qresource prefix="resources">
+    <file>shader/basic.fs</file>
+    <file>shader/basic.vs</file>
+    <file>shader/geometry.fs</file>
+    <file>shader/geometry.gs</file>
+    <file>shader/geometry.vs</file>
+    <file>shader/shader.fs</file>
+    <file>shader/shader.gs</file>
+    <file>shader/shader.vs</file>
   </qresource>
 </RCC>

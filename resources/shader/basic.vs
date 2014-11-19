@@ -1,8 +1,11 @@
-// #version 330 core
+#version 150
 
-varying vec3 normal;
+in vec4 vPosition;
+in vec4 vNormal;
 
-void main(){
-    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
-    normal = gl_Normal;
+uniform mat4 ModelView;
+uniform mat4 Projection;
+
+void main() {
+    gl_Position = Projection * ModelView * vPosition;
 }
