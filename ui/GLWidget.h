@@ -44,6 +44,8 @@ private:
     float specularPower;
     float normalLength;
     
+    QString shaderName1;
+    QString shaderName2;
     QGLShaderProgram shader1;
     QGLShaderProgram shader2;
 
@@ -58,6 +60,7 @@ private slots:
 
 public:
     void postUpdate();
+    void setShader(int, QString);
     void setColor(QColor color);
     void setAutoRotate(bool autoRotate);
     void setNormalLength(float normalLength);

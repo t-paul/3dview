@@ -1,11 +1,11 @@
-// #version 330 core
+#version 150
 
-varying vec3 normal;
+in float diffuse_value;
 
-void main(){
-    if (gl_FrontFacing) {
-        gl_FragColor = vec4(normal.x, 0.0, 0.0, 1.0);
-    } else {
-        gl_FragColor = vec4(0.0, 0.5, 0.0, 1.0);
-    }
+out vec4 fragColor;
+
+uniform vec4 AmbientProduct;
+
+void main() {
+    fragColor = AmbientProduct * diffuse_value;
 }

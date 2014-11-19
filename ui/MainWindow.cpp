@@ -1,6 +1,8 @@
 #include <iostream>
 
+#include <QDir>
 #include <QFileDialog>
+#include <QStringList>
 
 #include "MainWindow.h"
 
@@ -13,6 +15,20 @@ MainWindow::MainWindow()
     diffuseIntensity = 0.5;
     specularIntensity = 0.5;
     specularPower = 128;
+    normalLength = 0.4;
+    shader1 = "shader";
+    
+    QDir shader(":/resources/shader");
+    QStringList filter("*.vs");
+    QFileInfoList entries = shader.entryInfoList(filter, QDir::Files, QDir::Name);
+    ui.comboBoxShader1->addItem("<none>");
+    ui.comboBoxShader2->addItem("<none>");
+    foreach (QFileInfo entry, entries) {
+	ui.comboBoxShader1->addItem(entry.baseName());
+	ui.comboBoxShader2->addItem(entry.baseName());
+    }
+    ui.gl->setShader(0, shader1);
+    
     updateGUI();
 }
 
@@ -98,6 +114,22 @@ MainWindow::on_sliderNormalLength_valueChanged(int value)
 }
 
 void
+MainWindow::on_comboBoxShader1_activated(QString value)
+{
+    this->shader1 = value;
+    ui.gl->setShader(0, shader1);
+    ui.gl->postUpdate();
+}
+
+void
+MainWindow::on_comboBoxShader2_activated(QString value)
+{
+    this->shader2 = value;
+    ui.gl->setShader(1, shader2);
+    ui.gl->postUpdate();
+}
+
+void
 MainWindow::on_pushButtonAutoRotate_toggled(void)
 {
     ui.gl->setAutoRotate(ui.pushButtonAutoRotate->isChecked());
@@ -114,6 +146,11 @@ MainWindow::updateGUI()
     ui.sliderSpecularIntensity->setValue(specularIntensity * 100);
     ui.sliderSpecularPower->setValue(specularPower);
     ui.sliderNormalLength->setValue(std::log(normalLength + 1) * 100);
+    
+    int idx = ui.comboBoxShader1->findText(shader1);
+    if (idx >= 0) {
+	ui.comboBoxShader1->setCurrentText(shader1);
+    }
 }
 
 void

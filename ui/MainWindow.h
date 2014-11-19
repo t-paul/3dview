@@ -24,6 +24,8 @@ private:
     float specularIntensity;
     float specularPower;
     float normalLength;
+    QString shader1;
+    QString shader2;
     QColor color;
     
     void updateGUI();
@@ -40,6 +42,8 @@ private slots:
     void on_sliderSpecularIntensity_valueChanged(int);
     void on_sliderSpecularPower_valueChanged(int);
     void on_sliderNormalLength_valueChanged(int);
+    void on_comboBoxShader1_activated(QString);
+    void on_comboBoxShader2_activated(QString);
     void on_pushButtonAutoRotate_toggled(void);
 };
 

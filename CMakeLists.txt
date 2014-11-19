@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.0.0)
 
 project(3dview)
 
+include(CheckIncludeFileCXX)
+
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -13,6 +15,11 @@ endif()
 find_package(PkgConfig)
 pkg_check_modules(PC_ASSIMP REQUIRED assimp)
 include_directories(${PC_ASSIMP_INCLUDES})
+
+check_include_file_cxx("glm/glm.hpp" HAVE_GLM_H)
+if(NOT HAVE_GLM_H)
+  message(FATAL_ERROR "Can't find required glm library (see http://glm.g-truc.net/)")
+endif()
 
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5OpenGL REQUIRED)

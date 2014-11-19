@@ -85,6 +85,21 @@ GLWidget::setNormalLength(float normalLength)
 }
 
 void
+GLWidget::setShader(int index, QString shader)
+{
+    switch (index) {
+    case 0:
+	shaderName1 = shader;
+	break;
+    case 1:
+	shaderName2 = shader;
+	break;
+    default:
+	break;
+    }
+}
+
+void
 GLWidget::postUpdate()
 {
     repaintTimer->stop();
@@ -134,9 +149,6 @@ GLWidget::initializeGL()
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
     
-    loadShaders(shader1, "shader");
-    loadShaders(shader2, "geometry");
-
     QStringList args = QCoreApplication::arguments();
     if (args.size() > 1) {
 	QFileInfo fileInfo(args.at(1));
@@ -174,20 +186,34 @@ GLWidget::paintGL()
     if (autoRotate) {
 	yRot += 0.01;
     }
+
+    if (!shaderName1.isEmpty()) {
+	std::cout << "update shader 1" << std::endl;
+	loadShaders(shader1, shaderName1);
+	shaderName1.clear();
+    }
+    
+    if (!shaderName2.isEmpty()) {
+	std::cout << "update shader 2" << std::endl;
+	loadShaders(shader2, shaderName2);
+	shaderName2.clear();
+    }    
     
     transform.setRotate(glm::vec3(xRot, yRot, zRot));
     transform.setTranslate(glm::vec3(x, y, -distance));
     
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    setAttributes(shader1);
-    if (mesh) {
+    if (mesh && shader1.isLinked()) {
+	setAttributes(shader1);
         mesh->draw(shader1.attributeLocation("vPosition"), shader1.attributeLocation("vNormal"));
+	shader1.release();
     }
     
-    setAttributes(shader2);
-    if (mesh) {
+    if (mesh && shader2.isLinked()) {
+	setAttributes(shader2);
         mesh->draw(shader2.attributeLocation("vPosition"), shader1.attributeLocation("vNormal"));
+	shader2.release();
     }
     
     elapsed.restart();
@@ -283,19 +309,27 @@ GLWidget::loadShader(QGLShaderProgram & shader, const QGLShader::ShaderType type
 	if (!shaderSource.isEmpty()) {
 	    if (shader.addShaderFromSourceCode(type, shaderSource)) {
 		std::cout << "Added shader source for type " << type << std::endl;
+		return;
 	    } else {
 		std::cout << "Failed to add shader source for type " << type << std::endl;
 	    }
 	}
+    }
+    if (type == QGLShader::Vertex) {
+        shader.addShaderFromSourceCode(type, "void main() { gl_Position=vec4(0.0); }");
     }
 }
 
 void
 GLWidget::loadShaders(QGLShaderProgram & shader, const QString name)
 {
+    shader.removeAllShaders();
+
     QString path = QString(":/resources/shader/") + name;
     loadShader(shader, QGLShader::Vertex, path + ".vs");
     loadShader(shader, QGLShader::Fragment, path + ".fs");
     loadShader(shader, QGLShader::Geometry, path + ".gs");
-    shader.link();
+    if (!shader.link()) {
+	std::cout << shader.log().toStdString() << std::endl;
+    }
 }
