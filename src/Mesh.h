@@ -1,5 +1,4 @@
-#ifndef MESH_H
-#define	MESH_H
+#pragma once
 
 #include <glm/glm.hpp>
 
@@ -22,6 +21,3 @@ private:
     GLuint normalBuffer;
     glm::vec3 min, max;
 };
-
-#endif	/* MESH_H */
-

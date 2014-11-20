@@ -5,18 +5,15 @@
 #include <QStringList>
 
 #include "MainWindow.h"
+#include "Material.h"
 
 MainWindow::MainWindow()
 {
     ui.setupUi(this);
     
-    color = QColor(200, 176, 18);
-    ambientIntensity = 0.4;
-    diffuseIntensity = 0.5;
-    specularIntensity = 0.5;
-    specularPower = 128;
     normalLength = 0.4;
     shader1 = "shader";
+    material = "Gold";
     
     QDir shader(":/resources/shader");
     QStringList filter("*.vs");
@@ -29,11 +26,19 @@ MainWindow::MainWindow()
     }
     ui.gl->setShader(0, shader1);
     
+    on_comboBoxMaterial_activated(material);
     updateGUI();
 }
 
 MainWindow::~MainWindow()
 {
+}
+
+void MainWindow::applyColor(glm::vec3 color, QColor &qColor)
+{
+    qColor.setRedF(color.r);
+    qColor.setGreenF(color.g);
+    qColor.setBlueF(color.b);
 }
 
 void
@@ -58,23 +63,65 @@ MainWindow::on_actionOpen_triggered(void)
 }
 
 void
-MainWindow::on_sliderRed_valueChanged(int value)
+MainWindow::on_sliderRedA_valueChanged(int value)
 {
-    color.setRed(value);
+    colorA.setRed(value);
     updateGL();
 }
 
 void
-MainWindow::on_sliderGreen_valueChanged(int value)
+MainWindow::on_sliderGreenA_valueChanged(int value)
 {
-    color.setGreen(value);
+    colorA.setGreen(value);
     updateGL();
 }
 
 void
-MainWindow::on_sliderBlue_valueChanged(int value)
+MainWindow::on_sliderBlueA_valueChanged(int value)
 {
-    color.setBlue(value);
+    colorA.setBlue(value);
+    updateGL();
+}
+
+void
+MainWindow::on_sliderRedD_valueChanged(int value)
+{
+    colorD.setRed(value);
+    updateGL();
+}
+
+void
+MainWindow::on_sliderGreenD_valueChanged(int value)
+{
+    colorD.setGreen(value);
+    updateGL();
+}
+
+void
+MainWindow::on_sliderBlueD_valueChanged(int value)
+{
+    colorD.setBlue(value);
+    updateGL();
+}
+
+void
+MainWindow::on_sliderRedS_valueChanged(int value)
+{
+    colorS.setRed(value);
+    updateGL();
+}
+
+void
+MainWindow::on_sliderGreenS_valueChanged(int value)
+{
+    colorS.setGreen(value);
+    updateGL();
+}
+
+void
+MainWindow::on_sliderBlueS_valueChanged(int value)
+{
+    colorS.setBlue(value);
     updateGL();
 }
 
@@ -114,6 +161,20 @@ MainWindow::on_sliderNormalLength_valueChanged(int value)
 }
 
 void
+MainWindow::on_comboBoxMaterial_activated(QString value)
+{
+    const Material m = MaterialLibrary::inst()->find(value.toStdString());
+    applyColor(m.ambientColor(), colorA);
+    applyColor(m.diffuseColor(), colorD);
+    applyColor(m.specularColor(), colorS);
+    specularPower = m.shininess() * 128;
+    ambientIntensity = 1.0;
+    diffuseIntensity = 1.0;
+    specularIntensity = 1.0;
+    updateGL();
+}
+
+void
 MainWindow::on_comboBoxShader1_activated(QString value)
 {
     this->shader1 = value;
@@ -138,9 +199,15 @@ MainWindow::on_pushButtonAutoRotate_toggled(void)
 void
 MainWindow::updateGUI()
 {
-    ui.sliderRed->setValue(color.red());
-    ui.sliderGreen->setValue(color.green());
-    ui.sliderBlue->setValue(color.blue());
+    ui.sliderRedA->setValue(colorA.red());
+    ui.sliderGreenA->setValue(colorA.green());
+    ui.sliderBlueA->setValue(colorA.blue());
+    ui.sliderRedD->setValue(colorD.red());
+    ui.sliderGreenD->setValue(colorD.green());
+    ui.sliderBlueD->setValue(colorD.blue());
+    ui.sliderRedS->setValue(colorS.red());
+    ui.sliderGreenS->setValue(colorS.green());
+    ui.sliderBlueS->setValue(colorS.blue());
     ui.sliderAmbientIntensity->setValue(ambientIntensity * 100);
     ui.sliderDiffuseIntensity->setValue(diffuseIntensity * 100);
     ui.sliderSpecularIntensity->setValue(specularIntensity * 100);
@@ -151,24 +218,41 @@ MainWindow::updateGUI()
     if (idx >= 0) {
 	ui.comboBoxShader1->setCurrentText(shader1);
     }
+    
+    int matIdx = ui.comboBoxMaterial->findText(material);
+    if (matIdx >= 0) {
+	ui.comboBoxMaterial->setCurrentText(material);
+    }
 }
 
 void
 MainWindow::updateGL()
 {
-    ui.labelRedDisplay->setText(QString::number(color.redF(), 'f', 2));
-    ui.labelGreenDisplay->setText(QString::number(color.greenF(), 'f', 2));
-    ui.labelBlueDisplay->setText(QString::number(color.blueF(), 'f', 2));
+    ui.labelRedADisplay->setText(QString::number(colorA.redF(), 'f', 2));
+    ui.labelGreenADisplay->setText(QString::number(colorA.greenF(), 'f', 2));
+    ui.labelBlueADisplay->setText(QString::number(colorA.blueF(), 'f', 2));
     ui.labelAmbientIntensityDisplay->setText(QString::number(ambientIntensity, 'f', 2));
+    ui.labelRedDDisplay->setText(QString::number(colorD.redF(), 'f', 2));
+    ui.labelGreenDDisplay->setText(QString::number(colorD.greenF(), 'f', 2));
+    ui.labelBlueDDisplay->setText(QString::number(colorD.blueF(), 'f', 2));
     ui.labelDiffuseIntensityDisplay->setText(QString::number(diffuseIntensity, 'f', 2));
+    ui.labelRedSDisplay->setText(QString::number(colorS.redF(), 'f', 2));
+    ui.labelGreenSDisplay->setText(QString::number(colorS.greenF(), 'f', 2));
+    ui.labelBlueSDisplay->setText(QString::number(colorS.blueF(), 'f', 2));
     ui.labelSpecularIntensityDisplay->setText(QString::number(specularIntensity, 'f', 2));
     ui.labelSpecularPowerDisplay->setText(QString::number(specularPower, 'f', 0));
     ui.labelNormalLengthDisplay->setText(QString::number(normalLength, 'f', 2));
     
-    QPalette palette = ui.labelColorDisplay->palette();
-    palette.setColor(ui.labelColorDisplay->backgroundRole(), color);
-    ui.labelColorDisplay->setPalette(palette);
-    ui.gl->setColor(color);
+    QPalette paletteA = ui.labelColorADisplay->palette();
+    paletteA.setColor(ui.labelColorADisplay->backgroundRole(), colorA);
+    ui.labelColorADisplay->setPalette(paletteA);
+    QPalette paletteD = ui.labelColorDDisplay->palette();
+    paletteD.setColor(ui.labelColorDDisplay->backgroundRole(), colorD);
+    ui.labelColorDDisplay->setPalette(paletteD);
+    QPalette paletteS = ui.labelColorSDisplay->palette();
+    paletteS.setColor(ui.labelColorSDisplay->backgroundRole(), colorS);
+    ui.labelColorSDisplay->setPalette(paletteS);
+    ui.gl->setColors(colorA, colorD, colorS);
     ui.gl->setNormalLength(normalLength);
     ui.gl->setIntensity(ambientIntensity, diffuseIntensity, specularIntensity, specularPower);
     ui.gl->postUpdate();

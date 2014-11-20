@@ -37,7 +37,9 @@ private:
     Transform transform;
     Mesh *mesh;
     
-    QColor color;
+    QColor colorA;
+    QColor colorD;
+    QColor colorS;
     float ambientIntensity;
     float diffuseIntensity;
     float specularIntensity;
@@ -61,7 +63,7 @@ private slots:
 public:
     void postUpdate();
     void setShader(int, QString);
-    void setColor(QColor color);
+    void setColors(QColor colorA, QColor colorD, QColor colorS);
     void setAutoRotate(bool autoRotate);
     void setNormalLength(float normalLength);
     void setIntensity(float ambientIntensity, float diffuseIntensity, float specularIntensity, float specularPower);

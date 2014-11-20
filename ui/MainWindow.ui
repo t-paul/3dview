@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1050</width>
-    <height>703</height>
+    <width>1339</width>
+    <height>1154</height>
    </rect>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -29,7 +29,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1050</width>
+     <width>1339</width>
      <height>33</height>
     </rect>
    </property>
@@ -63,240 +63,645 @@
     <number>2</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents">
-    <layout class="QGridLayout" name="gridLayout">
-     <item row="2" column="1">
-      <widget class="QSlider" name="sliderGreen">
-       <property name="maximum">
-        <number>255</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="12" column="1">
-      <spacer name="verticalSpacer">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="1" column="1">
-      <widget class="QSlider" name="sliderRed">
-       <property name="maximum">
-        <number>255</number>
-       </property>
-       <property name="singleStep">
-        <number>1</number>
-       </property>
-       <property name="value">
-        <number>0</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="tickPosition">
-        <enum>QSlider::NoTicks</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="labelRed">
-       <property name="text">
-        <string>Red</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
-      <widget class="QSlider" name="sliderBlue">
-       <property name="maximum">
-        <number>255</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="labelGreen">
-       <property name="text">
-        <string>Green</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="labelBlue">
-       <property name="text">
-        <string>Blue</string>
-       </property>
-      </widget>
-     </item>
-     <item row="11" column="0" colspan="2">
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::Minimum</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>300</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="0" column="1">
-      <widget class="QLabel" name="labelColorDisplay">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="autoFillBackground">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QScrollArea" name="scrollArea">
+       <property name="widgetResizable">
         <bool>true</bool>
        </property>
-       <property name="text">
-        <string/>
-       </property>
+       <widget class="QWidget" name="scrollAreaWidgetContents">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>318</width>
+          <height>986</height>
+         </rect>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_3">
+         <item row="5" column="0">
+          <widget class="QLabel" name="labelAmbientIntensity">
+           <property name="text">
+            <string>Intensity</string>
+           </property>
+          </widget>
+         </item>
+         <item row="24" column="0" colspan="3">
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Minimum</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>300</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="12" column="0">
+          <spacer name="verticalSpacer_3">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>8</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="7" column="1">
+          <widget class="QLabel" name="labelColorDDisplay">
+           <property name="autoFillBackground">
+            <bool>true</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="23" column="1" colspan="2">
+          <widget class="QComboBox" name="comboBoxShader2"/>
+         </item>
+         <item row="2" column="2">
+          <widget class="QLabel" name="labelRedADisplay">
+           <property name="text">
+            <string>_</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="2">
+          <widget class="QLabel" name="labelGreenADisplay">
+           <property name="text">
+            <string>_</string>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="0">
+          <widget class="QLabel" name="labelGreenD">
+           <property name="text">
+            <string>Green</string>
+           </property>
+          </widget>
+         </item>
+         <item row="22" column="1" colspan="2">
+          <widget class="QComboBox" name="comboBoxShader1"/>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="labelRed">
+           <property name="text">
+            <string>Red</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QSlider" name="sliderRedA">
+           <property name="maximum">
+            <number>255</number>
+           </property>
+           <property name="singleStep">
+            <number>1</number>
+           </property>
+           <property name="value">
+            <number>0</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="tickPosition">
+            <enum>QSlider::NoTicks</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="14" column="1">
+          <widget class="QSlider" name="sliderRedS">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="0">
+          <widget class="QLabel" name="labelRedD">
+           <property name="text">
+            <string>Red</string>
+           </property>
+          </widget>
+         </item>
+         <item row="11" column="1">
+          <widget class="QSlider" name="sliderDiffuseIntensity">
+           <property name="maximum">
+            <number>100</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1">
+          <widget class="QSlider" name="sliderAmbientIntensity">
+           <property name="maximum">
+            <number>100</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="25" column="1">
+          <spacer name="verticalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="19" column="1">
+          <widget class="QSlider" name="sliderSpecularPower">
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>1024</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="21" column="2">
+          <widget class="QLabel" name="labelNormalLengthDisplay">
+           <property name="text">
+            <string>_</string>
+           </property>
+          </widget>
+         </item>
+         <item row="23" column="0">
+          <widget class="QLabel" name="labelShader2">
+           <property name="text">
+            <string>Shader 2</string>
+           </property>
+          </widget>
+         </item>
+         <item row="19" column="2">
+          <widget class="QLabel" name="labelSpecularPowerDisplay">
+           <property name="text">
+            <string>_</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="2">
+          <widget class="QLabel" name="labelBlueADisplay">
+           <property name="text">
+            <string>_</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="labelColorA">
+           <property name="text">
+            <string>Color (A)</string>
+           </property>
+          </widget>
+         </item>
+         <item row="21" column="1">
+          <widget class="QSlider" name="sliderNormalLength">
+           <property name="minimum">
+            <number>0</number>
+           </property>
+           <property name="maximum">
+            <number>200</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="1">
+          <widget class="QSlider" name="sliderGreenD">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="15" column="0">
+          <widget class="QLabel" name="labelGreenS">
+           <property name="text">
+            <string>Green</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="labelGreen">
+           <property name="text">
+            <string>Green</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QSlider" name="sliderGreenA">
+           <property name="maximum">
+            <number>255</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="16" column="1">
+          <widget class="QSlider" name="sliderBlueS">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="1">
+          <widget class="QSlider" name="sliderRedD">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="15" column="1">
+          <widget class="QSlider" name="sliderGreenS">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="17" column="0">
+          <widget class="QLabel" name="labelSpecularIntensity">
+           <property name="text">
+            <string>Intensity</string>
+           </property>
+          </widget>
+         </item>
+         <item row="14" column="0">
+          <widget class="QLabel" name="labelRedS">
+           <property name="text">
+            <string>Red</string>
+           </property>
+          </widget>
+         </item>
+         <item row="22" column="0">
+          <widget class="QLabel" name="labelShader1">
+           <property name="text">
+            <string>Shader 1</string>
+           </property>
+          </widget>
+         </item>
+         <item row="17" column="1">
+          <widget class="QSlider" name="sliderSpecularIntensity">
+           <property name="maximum">
+            <number>100</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="labelBlue">
+           <property name="text">
+            <string>Blue</string>
+           </property>
+          </widget>
+         </item>
+         <item row="11" column="0">
+          <widget class="QLabel" name="labelDiffuseIntensity">
+           <property name="text">
+            <string>Intensity</string>
+           </property>
+          </widget>
+         </item>
+         <item row="21" column="0">
+          <widget class="QLabel" name="labelNormalLength">
+           <property name="text">
+            <string>Normals</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="0">
+          <widget class="QLabel" name="labelColorD">
+           <property name="text">
+            <string>Color (D)</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QSlider" name="sliderBlueA">
+           <property name="maximum">
+            <number>255</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="11" column="2">
+          <widget class="QLabel" name="labelDiffuseIntensityDisplay">
+           <property name="text">
+            <string>_</string>
+           </property>
+          </widget>
+         </item>
+         <item row="10" column="0">
+          <widget class="QLabel" name="labelBlueD">
+           <property name="text">
+            <string>Blue</string>
+           </property>
+          </widget>
+         </item>
+         <item row="13" column="0">
+          <widget class="QLabel" name="labelColorS">
+           <property name="text">
+            <string>Color (S)</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0">
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>8</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="16" column="0">
+          <widget class="QLabel" name="labelBlueS">
+           <property name="text">
+            <string>Blue</string>
+           </property>
+          </widget>
+         </item>
+         <item row="19" column="0">
+          <widget class="QLabel" name="labelSpecularPower">
+           <property name="text">
+            <string>Shininess</string>
+           </property>
+          </widget>
+         </item>
+         <item row="17" column="2">
+          <widget class="QLabel" name="labelSpecularIntensityDisplay">
+           <property name="text">
+            <string>_</string>
+           </property>
+          </widget>
+         </item>
+         <item row="10" column="1">
+          <widget class="QSlider" name="sliderBlueD">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="2">
+          <widget class="QLabel" name="labelAmbientIntensityDisplay">
+           <property name="text">
+            <string>_</string>
+           </property>
+          </widget>
+         </item>
+         <item row="18" column="0">
+          <spacer name="verticalSpacer_4">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>8</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="labelMaterial">
+           <property name="text">
+            <string>Material</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" colspan="2">
+          <widget class="QComboBox" name="comboBoxMaterial">
+           <item>
+            <property name="text">
+             <string>Emerald</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Jade</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Obsidian</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Pearl</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ruby</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Turquoise</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Brass</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Bronze</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Chrome</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Copper</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Gold</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Silver</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Black Plastic</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Cyan Plastic</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Green Plastic</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Red Plastic</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>White Plastic</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Yellow Plastic</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Black Rubber</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Cyan Rubber</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Green Rubber</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Red Rubber</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>White Rubber</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Yellow Rubber</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLabel" name="labelColorADisplay">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="autoFillBackground">
+            <bool>true</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="13" column="1">
+          <widget class="QLabel" name="labelColorSDisplay">
+           <property name="autoFillBackground">
+            <bool>true</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="2">
+          <widget class="QLabel" name="labelRedDDisplay">
+           <property name="text">
+            <string>_</string>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="2">
+          <widget class="QLabel" name="labelGreenDDisplay">
+           <property name="text">
+            <string>_</string>
+           </property>
+          </widget>
+         </item>
+         <item row="10" column="2">
+          <widget class="QLabel" name="labelBlueDDisplay">
+           <property name="text">
+            <string>_</string>
+           </property>
+          </widget>
+         </item>
+         <item row="14" column="2">
+          <widget class="QLabel" name="labelRedSDisplay">
+           <property name="text">
+            <string>_</string>
+           </property>
+          </widget>
+         </item>
+         <item row="15" column="2">
+          <widget class="QLabel" name="labelGreenSDisplay">
+           <property name="text">
+            <string>_</string>
+           </property>
+          </widget>
+         </item>
+         <item row="16" column="2">
+          <widget class="QLabel" name="labelBlueSDisplay">
+           <property name="text">
+            <string>_</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </widget>
      </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="labelColor">
-       <property name="text">
-        <string>Color</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="labelAmbientIntensity">
-       <property name="text">
-        <string>Intensity (A)</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="0">
-      <widget class="QLabel" name="labelDiffuseIntensity">
-       <property name="text">
-        <string>Intensity (D)</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="1">
-      <widget class="QSlider" name="sliderAmbientIntensity">
-       <property name="maximum">
-        <number>100</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="1">
-      <widget class="QSlider" name="sliderDiffuseIntensity">
-       <property name="maximum">
-        <number>100</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="0">
-      <widget class="QLabel" name="labelSpecularIntensity">
-       <property name="text">
-        <string>Intensity (S)</string>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="1">
-      <widget class="QSlider" name="sliderSpecularIntensity">
-       <property name="maximum">
-        <number>100</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="2">
-      <widget class="QLabel" name="labelRedDisplay">
-       <property name="text">
-        <string>_</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="2">
-      <widget class="QLabel" name="labelGreenDisplay">
-       <property name="text">
-        <string>_</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="2">
-      <widget class="QLabel" name="labelBlueDisplay">
-       <property name="text">
-        <string>_</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="2">
-      <widget class="QLabel" name="labelAmbientIntensityDisplay">
-       <property name="text">
-        <string>_</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="2">
-      <widget class="QLabel" name="labelDiffuseIntensityDisplay">
-       <property name="text">
-        <string>_</string>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="2">
-      <widget class="QLabel" name="labelSpecularIntensityDisplay">
-       <property name="text">
-        <string>_</string>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="0">
-      <widget class="QLabel" name="labelSpecularPower">
-       <property name="text">
-        <string>Power (S)</string>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="1">
-      <widget class="QSlider" name="sliderSpecularPower">
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>1024</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="2">
-      <widget class="QLabel" name="labelSpecularPowerDisplay">
-       <property name="text">
-        <string>_</string>
-       </property>
-      </widget>
-     </item>
-     <item row="13" column="0" colspan="3">
+     <item>
       <widget class="QPushButton" name="pushButtonAutoRotate">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -312,53 +717,6 @@
        </property>
        <property name="checked">
         <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="8" column="1">
-      <widget class="QSlider" name="sliderNormalLength">
-       <property name="minimum">
-        <number>0</number>
-       </property>
-       <property name="maximum">
-        <number>200</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="8" column="0">
-      <widget class="QLabel" name="labelNormalLength">
-       <property name="text">
-        <string>Normals</string>
-       </property>
-      </widget>
-     </item>
-     <item row="8" column="2">
-      <widget class="QLabel" name="labelNormalLengthDisplay">
-       <property name="text">
-        <string>_</string>
-       </property>
-      </widget>
-     </item>
-     <item row="9" column="1" colspan="2">
-      <widget class="QComboBox" name="comboBoxShader1"/>
-     </item>
-     <item row="10" column="1" colspan="2">
-      <widget class="QComboBox" name="comboBoxShader2"/>
-     </item>
-     <item row="9" column="0">
-      <widget class="QLabel" name="labelShader1">
-       <property name="text">
-        <string>Shader 1</string>
-       </property>
-      </widget>
-     </item>
-     <item row="10" column="0">
-      <widget class="QLabel" name="labelShader2">
-       <property name="text">
-        <string>Shader 2</string>
        </property>
       </widget>
      </item>

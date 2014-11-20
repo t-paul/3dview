@@ -1,5 +1,4 @@
-#ifndef TRANSFORM_H
-#define	TRANSFORM_H
+#pragma once
 
 #include <glm/glm.hpp>
 
@@ -31,6 +30,3 @@ private:
     glm::vec3 cam_target;
     glm::vec3 cam_up;
 };
-
-#endif	/* TRANSFORM_H */
-

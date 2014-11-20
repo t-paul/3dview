@@ -54,9 +54,11 @@ GLWidget::onTimer()
 }
 
 void
-GLWidget::setColor(QColor color)
+GLWidget::setColors(QColor colorA, QColor colorD, QColor colorS)
 {
-    this->color = color;
+    this->colorA = colorA;
+    this->colorD = colorD;
+    this->colorS = colorS;
 }
 
 void
@@ -167,9 +169,9 @@ GLWidget::setAttributes(QGLShaderProgram & shader)
     
     glm::vec4 light_pos = glm::vec4(glm::rotateZ(glm::vec3(50.0, 50.0, 200.0), light_angle), 1.0);
     
-    shader.setUniformValue("AmbientProduct", ambientIntensity * color.redF(), ambientIntensity * color.greenF(), ambientIntensity * color.blueF(), 1.0);
-    shader.setUniformValue("DiffuseProduct", diffuseIntensity, diffuseIntensity, diffuseIntensity, 1.0);
-    shader.setUniformValue("SpecularProduct", specularIntensity, specularIntensity, specularIntensity, 1.0);
+    shader.setUniformValue("AmbientProduct", ambientIntensity * colorA.redF(), ambientIntensity * colorA.greenF(), ambientIntensity * colorA.blueF(), 1.0);
+    shader.setUniformValue("DiffuseProduct", diffuseIntensity * colorD.redF(), diffuseIntensity * colorD.greenF(), diffuseIntensity * colorD.blueF(), 1.0);
+    shader.setUniformValue("SpecularProduct", specularIntensity * colorS.redF(), specularIntensity * colorS.greenF(), specularIntensity * colorS.blueF(), 1.0);
     shader.setUniformValue("LightPosition", light_pos.x, light_pos.y, light_pos.z, light_pos.w);
     shader.setUniformValue("Shininess", specularPower);
     shader.setUniformValue("NormalLength", normalLength);
