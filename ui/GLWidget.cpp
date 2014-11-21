@@ -214,7 +214,7 @@ GLWidget::paintGL()
     
     if (mesh && shader2.isLinked()) {
 	setAttributes(shader2);
-        mesh->draw(shader2.attributeLocation("vPosition"), shader1.attributeLocation("vNormal"));
+        mesh->draw(shader2.attributeLocation("vPosition"), shader2.attributeLocation("vNormal"));
 	shader2.release();
     }
     
