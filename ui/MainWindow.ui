@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1339</width>
-    <height>1154</height>
+    <height>987</height>
    </rect>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -75,7 +75,7 @@
           <x>0</x>
           <y>0</y>
           <width>318</width>
-          <height>986</height>
+          <height>819</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout_3">
@@ -183,6 +183,9 @@
          </item>
          <item row="14" column="1">
           <widget class="QSlider" name="sliderRedS">
+           <property name="maximum">
+            <number>255</number>
+           </property>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -291,6 +294,9 @@
          </item>
          <item row="9" column="1">
           <widget class="QSlider" name="sliderGreenD">
+           <property name="maximum">
+            <number>255</number>
+           </property>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -322,6 +328,9 @@
          </item>
          <item row="16" column="1">
           <widget class="QSlider" name="sliderBlueS">
+           <property name="maximum">
+            <number>255</number>
+           </property>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -329,6 +338,9 @@
          </item>
          <item row="8" column="1">
           <widget class="QSlider" name="sliderRedD">
+           <property name="maximum">
+            <number>255</number>
+           </property>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -336,6 +348,9 @@
          </item>
          <item row="15" column="1">
           <widget class="QSlider" name="sliderGreenS">
+           <property name="maximum">
+            <number>255</number>
+           </property>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -470,6 +485,9 @@
          </item>
          <item row="10" column="1">
           <widget class="QSlider" name="sliderBlueD">
+           <property name="maximum">
+            <number>255</number>
+           </property>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -507,6 +525,11 @@
          </item>
          <item row="0" column="1" colspan="2">
           <widget class="QComboBox" name="comboBoxMaterial">
+           <item>
+            <property name="text">
+             <string>&lt;none&gt;</string>
+            </property>
+           </item>
            <item>
             <property name="text">
              <string>Emerald</string>

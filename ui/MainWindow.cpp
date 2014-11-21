@@ -163,7 +163,8 @@ MainWindow::on_sliderNormalLength_valueChanged(int value)
 void
 MainWindow::on_comboBoxMaterial_activated(QString value)
 {
-    const Material m = MaterialLibrary::inst()->find(value.toStdString());
+    material = value;
+    const Material m = MaterialLibrary::inst()->find(material.toStdString());
     applyColor(m.ambientColor(), colorA);
     applyColor(m.diffuseColor(), colorD);
     applyColor(m.specularColor(), colorS);
@@ -171,6 +172,7 @@ MainWindow::on_comboBoxMaterial_activated(QString value)
     ambientIntensity = 1.0;
     diffuseIntensity = 1.0;
     specularIntensity = 1.0;
+    updateGUI();
     updateGL();
 }
 
