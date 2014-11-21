@@ -228,6 +228,20 @@ MainWindow::updateGUI()
 }
 
 void
+MainWindow::setColor(QLabel *label, const QColor &color, float intensity)
+{
+    QColor col;
+    float red = std::min((float)color.redF() * intensity, 1.0f);
+    float green = std::min((float)color.greenF() * intensity, 1.0f);
+    float blue = std::min((float)color.blueF() * intensity, 1.0f);
+    col.setRgbF(red, green, blue);
+
+    QPalette palette = label->palette();
+    palette.setColor(label->backgroundRole(), col);
+    label->setPalette(palette);
+}
+
+void
 MainWindow::updateGL()
 {
     ui.labelRedADisplay->setText(QString::number(colorA.redF(), 'f', 2));
@@ -245,15 +259,13 @@ MainWindow::updateGL()
     ui.labelSpecularPowerDisplay->setText(QString::number(specularPower, 'f', 0));
     ui.labelNormalLengthDisplay->setText(QString::number(normalLength, 'f', 2));
     
-    QPalette paletteA = ui.labelColorADisplay->palette();
-    paletteA.setColor(ui.labelColorADisplay->backgroundRole(), colorA);
-    ui.labelColorADisplay->setPalette(paletteA);
-    QPalette paletteD = ui.labelColorDDisplay->palette();
-    paletteD.setColor(ui.labelColorDDisplay->backgroundRole(), colorD);
-    ui.labelColorDDisplay->setPalette(paletteD);
-    QPalette paletteS = ui.labelColorSDisplay->palette();
-    paletteS.setColor(ui.labelColorSDisplay->backgroundRole(), colorS);
-    ui.labelColorSDisplay->setPalette(paletteS);
+    setColor(ui.labelColorADisplay, colorA, 1.0f);
+    setColor(ui.labelColorADisplayI, colorA, ambientIntensity);
+    setColor(ui.labelColorDDisplay, colorD, 1.0f);
+    setColor(ui.labelColorDDisplayI, colorD, diffuseIntensity);
+    setColor(ui.labelColorSDisplay, colorS, 1.0f);
+    setColor(ui.labelColorSDisplayI, colorS, specularIntensity);
+    
     ui.gl->setColors(colorA, colorD, colorS);
     ui.gl->setNormalLength(normalLength);
     ui.gl->setIntensity(ambientIntensity, diffuseIntensity, specularIntensity, specularPower);

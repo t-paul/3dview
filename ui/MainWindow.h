@@ -31,6 +31,7 @@ private:
     QColor colorD;
     QColor colorS;
     
+    void setColor(QLabel *label, const QColor &color, float intensity);
     void applyColor(glm::vec3 color, QColor &qColor);
     void updateGUI();
     void updateGL();
