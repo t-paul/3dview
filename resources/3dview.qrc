@@ -10,8 +10,7 @@
     <file>shader/geometry.fs</file>
     <file>shader/geometry.gs</file>
     <file>shader/geometry.vs</file>
-    <file>shader/shader.fs</file>
-    <file>shader/shader.gs</file>
-    <file>shader/shader.vs</file>
+    <file>shader/phong.fs</file>
+    <file>shader/phong.vs</file>
   </qresource>
 </RCC>

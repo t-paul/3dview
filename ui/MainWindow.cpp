@@ -12,7 +12,7 @@ MainWindow::MainWindow()
     ui.setupUi(this);
     
     normalLength = 0.4;
-    shader1 = "shader";
+    shader1 = "phong";
     material = "Gold";
     
     QDir shader(":/resources/shader");
