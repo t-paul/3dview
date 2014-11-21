@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="resources">
+    <file>shader/flat.fs</file>
+    <file>shader/flat.vs</file>
     <file>shader/simple.fs</file>
     <file>shader/simple.vs</file>
     <file>shader/wireframe.fs</file>
