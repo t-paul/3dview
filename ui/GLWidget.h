@@ -48,14 +48,14 @@ private:
     
     QString shaderName1;
     QString shaderName2;
-    QGLShaderProgram shader1;
-    QGLShaderProgram shader2;
+    QGLShaderProgram *shader1;
+    QGLShaderProgram *shader2;
 
 private:
     void initView();
-    void setAttributes(QGLShaderProgram &);
-    void loadShader(QGLShaderProgram &shader, const QGLShader::ShaderType type, const QString name);
-    void loadShaders(QGLShaderProgram &shader, const QString name);
+    void setAttributes(QGLShaderProgram *);
+    void loadShader(QGLShaderProgram *shader, const QGLShader::ShaderType type, const QString name);
+    void loadShaders(QGLShaderProgram *shader, const QString name);
 
 private slots:
     void onTimer();
@@ -72,6 +72,7 @@ public:
 protected:
     void initializeGL();
     void paintGL();
+    void updateShader(QGLShaderProgram *& shader, QString &shaderName);
     void resizeGL(int width, int height);
     void wheelEvent(QWheelEvent *event);
     void mousePressEvent(QMouseEvent *event);

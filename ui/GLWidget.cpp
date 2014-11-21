@@ -23,6 +23,8 @@ GLWidget::GLWidget(QWidget* parent) : QGLWidget(parent)
     initView();
 
     mesh = NULL;
+    shader1 = NULL;
+    shader2 = NULL;
     timer = new QTimer();
     repaintTimer = new QTimer();
     connect(timer, SIGNAL(timeout()), this, SLOT(onTimer()));
@@ -163,23 +165,35 @@ GLWidget::initializeGL()
 }
 
 void
-GLWidget::setAttributes(QGLShaderProgram & shader)
+GLWidget::setAttributes(QGLShaderProgram * shader)
 {
-    shader.bind();
+    shader->bind();
     
     glm::vec4 light_pos = glm::vec4(glm::rotateZ(glm::vec3(50.0, 50.0, 200.0), light_angle), 1.0);
     
-    shader.setUniformValue("AmbientProduct", ambientIntensity * colorA.redF(), ambientIntensity * colorA.greenF(), ambientIntensity * colorA.blueF(), 1.0);
-    shader.setUniformValue("DiffuseProduct", diffuseIntensity * colorD.redF(), diffuseIntensity * colorD.greenF(), diffuseIntensity * colorD.blueF(), 1.0);
-    shader.setUniformValue("SpecularProduct", specularIntensity * colorS.redF(), specularIntensity * colorS.greenF(), specularIntensity * colorS.blueF(), 1.0);
-    shader.setUniformValue("LightPosition", light_pos.x, light_pos.y, light_pos.z, light_pos.w);
-    shader.setUniformValue("Shininess", specularPower);
-    shader.setUniformValue("NormalLength", normalLength);
+    shader->setUniformValue("AmbientProduct", ambientIntensity * colorA.redF(), ambientIntensity * colorA.greenF(), ambientIntensity * colorA.blueF(), 1.0);
+    shader->setUniformValue("DiffuseProduct", diffuseIntensity * colorD.redF(), diffuseIntensity * colorD.greenF(), diffuseIntensity * colorD.blueF(), 1.0);
+    shader->setUniformValue("SpecularProduct", specularIntensity * colorS.redF(), specularIntensity * colorS.greenF(), specularIntensity * colorS.blueF(), 1.0);
+    shader->setUniformValue("LightPosition", light_pos.x, light_pos.y, light_pos.z, light_pos.w);
+    shader->setUniformValue("Shininess", specularPower);
+    shader->setUniformValue("NormalLength", normalLength);
 
-    shader.setUniformValue("Projection", QMatrix4x4(glm::value_ptr(transform.projection())).transposed());
+    shader->setUniformValue("Projection", QMatrix4x4(glm::value_ptr(transform.projection())).transposed());
 
     glm::mat4 modelview = transform.matrix() * mesh->matrix();
-    shader.setUniformValue("ModelView", QMatrix4x4(glm::value_ptr(modelview)).transposed());
+    shader->setUniformValue("ModelView", QMatrix4x4(glm::value_ptr(modelview)).transposed());
+}
+
+void
+GLWidget::updateShader(QGLShaderProgram *& shader, QString &shaderName)
+{
+    if (shader) {
+	delete shader;
+    }
+    
+    shader = new QGLShaderProgram();
+    loadShaders(shader, shaderName);
+    shaderName.clear();
 }
 
 void
@@ -190,15 +204,11 @@ GLWidget::paintGL()
     }
 
     if (!shaderName1.isEmpty()) {
-	std::cout << "update shader 1" << std::endl;
-	loadShaders(shader1, shaderName1);
-	shaderName1.clear();
+	updateShader(shader1, shaderName1);
     }
     
     if (!shaderName2.isEmpty()) {
-	std::cout << "update shader 2" << std::endl;
-	loadShaders(shader2, shaderName2);
-	shaderName2.clear();
+	updateShader(shader2, shaderName2);
     }    
     
     transform.setRotate(glm::vec3(xRot, yRot, zRot));
@@ -206,16 +216,16 @@ GLWidget::paintGL()
     
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    if (mesh && shader1.isLinked()) {
+    if (mesh && shader1 && shader1->isLinked()) {
 	setAttributes(shader1);
-        mesh->draw(shader1.attributeLocation("vPosition"), shader1.attributeLocation("vNormal"));
-	shader1.release();
+        mesh->draw(shader1->attributeLocation("vPosition"), shader1->attributeLocation("vNormal"));
+	shader1->release();
     }
     
-    if (mesh && shader2.isLinked()) {
+    if (mesh && shader2 && shader2->isLinked()) {
 	setAttributes(shader2);
-        mesh->draw(shader2.attributeLocation("vPosition"), shader2.attributeLocation("vNormal"));
-	shader2.release();
+        mesh->draw(shader2->attributeLocation("vPosition"), shader2->attributeLocation("vNormal"));
+	shader2->release();
     }
     
     elapsed.restart();
@@ -302,14 +312,14 @@ GLWidget::keyPressEvent(QKeyEvent *event)
 }
 
 void
-GLWidget::loadShader(QGLShaderProgram & shader, const QGLShader::ShaderType type, const QString name)
+GLWidget::loadShader(QGLShaderProgram * shader, const QGLShader::ShaderType type, const QString name)
 {
     QFile resource(name);
     if (resource.open(QFile::ReadOnly | QFile::Text)) {
 	QTextStream stream(&resource);
 	QString shaderSource = stream.readAll().trimmed();
 	if (!shaderSource.isEmpty()) {
-	    if (shader.addShaderFromSourceCode(type, shaderSource)) {
+	    if (shader->addShaderFromSourceCode(type, shaderSource)) {
 		std::cout << "Added shader source for type " << type << std::endl;
 		return;
 	    } else {
@@ -317,21 +327,16 @@ GLWidget::loadShader(QGLShaderProgram & shader, const QGLShader::ShaderType type
 	    }
 	}
     }
-    if (type == QGLShader::Vertex) {
-        shader.addShaderFromSourceCode(type, "void main() { gl_Position=vec4(0.0); }");
-    }
 }
 
 void
-GLWidget::loadShaders(QGLShaderProgram & shader, const QString name)
+GLWidget::loadShaders(QGLShaderProgram * shader, const QString name)
 {
-    shader.removeAllShaders();
-
     QString path = QString(":/resources/shader/") + name;
     loadShader(shader, QGLShader::Vertex, path + ".vs");
     loadShader(shader, QGLShader::Fragment, path + ".fs");
     loadShader(shader, QGLShader::Geometry, path + ".gs");
-    if (!shader.link()) {
-	std::cout << shader.log().toStdString() << std::endl;
+    if (!shader->link()) {
+	std::cout << "Shader link error: " << shader->log().toStdString() << std::endl;
     }
 }
