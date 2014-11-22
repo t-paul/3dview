@@ -1,5 +1,15 @@
 <RCC>
   <qresource prefix="resources">
+    <file>shader/bump.fs</file>
+    <file>shader/bump.vs</file>
+    <file>shader/texture.fs</file>
+    <file>textures/Dirt-normal.jpg</file>
+    <file>textures/Dirt.jpg</file>
+    <file>textures/Metal-normal.jpg</file>
+    <file>textures/Metal.jpg</file>
+    <file>textures/Stone-normal.jpg</file>
+    <file>textures/Stone.jpg</file>
+    <file>shader/texture.vs</file>
     <file>shader/flat.fs</file>
     <file>shader/flat.vs</file>
     <file>shader/simple.fs</file>

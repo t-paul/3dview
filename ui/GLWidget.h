@@ -5,6 +5,7 @@
 #include <QGLWidget>
 #include <QMouseEvent>
 #include <QElapsedTimer>
+#include <QOpenGLTexture>
 #include <QGLShaderProgram>
 
 #include "Mesh.h"
@@ -48,8 +49,11 @@ private:
     
     QString shaderName1;
     QString shaderName2;
+    QString textureName;
     QGLShaderProgram *shader1;
     QGLShaderProgram *shader2;
+    QOpenGLTexture *texture1;
+    QOpenGLTexture *texture2;
 
 private:
     void initView();
@@ -63,6 +67,7 @@ private slots:
 public:
     void postUpdate();
     void setShader(int, QString);
+    void setTextureName(QString);
     void setColors(QColor colorA, QColor colorD, QColor colorS);
     void setAutoRotate(bool autoRotate);
     void setNormalLength(float normalLength);

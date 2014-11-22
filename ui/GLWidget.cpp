@@ -56,6 +56,12 @@ GLWidget::onTimer()
 }
 
 void
+GLWidget::setTextureName(QString textureName)
+{
+    this->textureName = textureName;
+}
+
+void
 GLWidget::setColors(QColor colorA, QColor colorD, QColor colorS)
 {
     this->colorA = colorA;
@@ -177,9 +183,11 @@ GLWidget::setAttributes(QGLShaderProgram * shader)
     shader->setUniformValue("LightPosition", light_pos.x, light_pos.y, light_pos.z, light_pos.w);
     shader->setUniformValue("Shininess", specularPower);
     shader->setUniformValue("NormalLength", normalLength);
+    shader->setUniformValue("Texture1", 0);
+    shader->setUniformValue("Texture2", 1);
 
     shader->setUniformValue("Projection", QMatrix4x4(glm::value_ptr(transform.projection())).transposed());
-
+    
     glm::mat4 modelview = transform.matrix() * mesh->matrix();
     shader->setUniformValue("ModelView", QMatrix4x4(glm::value_ptr(modelview)).transposed());
 }
@@ -209,22 +217,40 @@ GLWidget::paintGL()
     
     if (!shaderName2.isEmpty()) {
 	updateShader(shader2, shaderName2);
-    }    
+    }
+    
+    if (!textureName.isEmpty()) {
+	texture1 = new QOpenGLTexture(QImage(QString(":/resources/textures/") + textureName + ".jpg"));
+	texture1->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
+	texture1->setMagnificationFilter(QOpenGLTexture::Linear);
+
+	texture2 = new QOpenGLTexture(QImage(QString(":/resources/textures/") + textureName + "-normal.jpg"));
+	texture2->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
+	texture2->setMagnificationFilter(QOpenGLTexture::Linear);
+	textureName.clear();
+    }
     
     transform.setRotate(glm::vec3(xRot, yRot, zRot));
     transform.setTranslate(glm::vec3(x, y, -distance));
     
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    texture1->bind(0);
+    texture2->bind(1);
+
     if (mesh && shader1 && shader1->isLinked()) {
 	setAttributes(shader1);
-        mesh->draw(shader1->attributeLocation("vPosition"), shader1->attributeLocation("vNormal"));
+        mesh->draw(shader1->attributeLocation("vPosition"),
+		shader1->attributeLocation("vNormal"),
+		shader1->attributeLocation("vTextureCoord"));
 	shader1->release();
     }
     
     if (mesh && shader2 && shader2->isLinked()) {
 	setAttributes(shader2);
-        mesh->draw(shader2->attributeLocation("vPosition"), shader2->attributeLocation("vNormal"));
+        mesh->draw(shader2->attributeLocation("vPosition"),
+		shader2->attributeLocation("vNormal"),
+		shader2->attributeLocation("vTextureCoord"));
 	shader2->release();
     }
     

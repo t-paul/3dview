@@ -25,6 +25,7 @@ private:
     float specularPower;
     float normalLength;
     QString material;
+    QString texture;
     QString shader1;
     QString shader2;
     QColor colorA;
@@ -54,6 +55,7 @@ private slots:
     void on_sliderSpecularPower_valueChanged(int);
     void on_sliderNormalLength_valueChanged(int);
     void on_comboBoxMaterial_activated(QString);
+    void on_comboBoxTexture_activated(QString);
     void on_comboBoxShader1_activated(QString);
     void on_comboBoxShader2_activated(QString);
     void on_pushButtonAutoRotate_toggled(void);

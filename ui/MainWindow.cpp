@@ -14,6 +14,7 @@ MainWindow::MainWindow()
     normalLength = 0.4;
     shader1 = "phong";
     material = "Gold";
+    texture = "Metal";
     
     QDir shader(":/resources/shader");
     QStringList filter("*.vs");
@@ -177,6 +178,13 @@ MainWindow::on_comboBoxMaterial_activated(QString value)
 }
 
 void
+MainWindow::on_comboBoxTexture_activated(QString value)
+{
+    texture = value;
+    updateGL();
+}
+
+void
 MainWindow::on_comboBoxShader1_activated(QString value)
 {
     this->shader1 = value;
@@ -266,6 +274,7 @@ MainWindow::updateGL()
     setColor(ui.labelColorSDisplay, colorS, 1.0f);
     setColor(ui.labelColorSDisplayI, colorS, specularIntensity);
     
+    ui.gl->setTextureName(texture);
     ui.gl->setColors(colorA, colorD, colorS);
     ui.gl->setNormalLength(normalLength);
     ui.gl->setIntensity(ambientIntensity, diffuseIntensity, specularIntensity, specularPower);

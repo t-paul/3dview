@@ -47,6 +47,7 @@ Mesh::Mesh(const std::string fileName) : fileName(fileName)
 {
     vertexBuffer = -1;
     normalBuffer = -1;
+    textureBuffer = -1;
 }
 
 Mesh::~Mesh()
@@ -81,6 +82,7 @@ Mesh::bind()
 
     std::vector<float> vertices;
     std::vector<float> normals;
+    std::vector<float> textureCoordinates;
     
     min.x = 1e38;
     min.y = 1e38;
@@ -135,6 +137,8 @@ Mesh::bind()
 		normals.push_back(mesh->mNormals[face->mIndices[idx]].y);
 		normals.push_back(mesh->mNormals[face->mIndices[idx]].z);
 		normals.push_back(0.0f);
+		textureCoordinates.push_back(x / 8);
+		textureCoordinates.push_back(z / 8);
 	    }
 	}
     }
@@ -163,6 +167,10 @@ Mesh::bind()
     glGenBuffers(1, &normalBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, normalBuffer);
     glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(float), &normals[0], GL_STATIC_DRAW);
+
+    glGenBuffers(1, &textureBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, textureBuffer);
+    glBufferData(GL_ARRAY_BUFFER, textureCoordinates.size() * sizeof(float), &textureCoordinates[0], GL_STATIC_DRAW);
 }
 
 glm::mat4
@@ -183,7 +191,7 @@ Mesh::matrix() const
 }
 
 void
-Mesh::draw(GLuint vertex, GLuint normal) const
+Mesh::draw(GLuint vertex, GLuint normal, GLuint texture) const
 {
     glEnableVertexAttribArray(vertex);
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
@@ -208,8 +216,20 @@ Mesh::draw(GLuint vertex, GLuint normal) const
 	    (void*)0 // array buffer offset
 	    );
 
+    glEnableVertexAttribArray(texture);
+    glBindBuffer(GL_ARRAY_BUFFER, textureBuffer);
+    glVertexAttribPointer(
+	    texture, // attribute 1. No particular reason for 0, but must match the layout in the shader.
+	    2, // size
+	    GL_FLOAT, // type
+	    GL_FALSE, // normalized?
+	    0, // stride
+	    (void*)0 // array buffer offset
+	    );
+
     glDrawArrays(GL_TRIANGLES, 0, count);
     
+    glDisableVertexAttribArray(texture);
     glDisableVertexAttribArray(normal);
     glDisableVertexAttribArray(vertex);
 }

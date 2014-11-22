@@ -9,7 +9,7 @@ public:
     
     void bind();
     glm::mat4 matrix() const;
-    void draw(GLuint vertex, GLuint normal) const;
+    void draw(GLuint vertex, GLuint normal, GLuint texture) const;
     
     const glm::vec3 & bboxMin();
     const glm::vec3 & bboxMax();
@@ -19,5 +19,6 @@ private:
     unsigned int count;
     GLuint vertexBuffer;
     GLuint normalBuffer;
+    GLuint textureBuffer;
     glm::vec3 min, max;
 };
