@@ -70,6 +70,12 @@ GLWidget::setColors(QColor colorA, QColor colorD, QColor colorS)
 }
 
 void
+GLWidget::setGenerateVertexNormals(bool generateVertexNormals)
+{
+    this->generateVertexNormals = generateVertexNormals;
+}
+
+void
 GLWidget::setAutoRotate(bool autoRotate)
 {
     timer->stop();
@@ -126,7 +132,7 @@ GLWidget::loadMesh(std::string filename)
     }
     
     std::cout << "loadMesh: file: " << filename << std::endl;
-    mesh = new Mesh(filename);
+    mesh = new Mesh(filename, generateVertexNormals);
     mesh->bind();
     initView();
     updateGL();

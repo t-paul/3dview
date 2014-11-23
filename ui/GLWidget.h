@@ -41,6 +41,7 @@ private:
     QColor colorA;
     QColor colorD;
     QColor colorS;
+    bool generateVertexNormals;
     float ambientIntensity;
     float diffuseIntensity;
     float specularIntensity;
@@ -68,6 +69,7 @@ public:
     void postUpdate();
     void setShader(int, QString);
     void setTextureName(QString);
+    void setGenerateVertexNormals(bool);
     void setColors(QColor colorA, QColor colorD, QColor colorS);
     void setAutoRotate(bool autoRotate);
     void setNormalLength(float normalLength);

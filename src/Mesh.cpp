@@ -43,7 +43,7 @@ void quad(std::vector<float> &vertices, std::vector<float> &normals, int a, int 
     push_back(normals, glm::vec4(n, 0.0)); push_back(vertices, positions[c]);
 }
 
-Mesh::Mesh(const std::string fileName) : fileName(fileName)
+Mesh::Mesh(const std::string fileName, bool generateVertexNormals) : fileName(fileName), generateVertexNormals(generateVertexNormals)
 {
     vertexBuffer = -1;
     normalBuffer = -1;
@@ -71,11 +71,20 @@ Mesh::bind()
 {
     Assimp::Importer importer;    
 
-    const aiScene* scene = importer.ReadFile(fileName, aiProcess_CalcTangentSpace |
-	aiProcess_Triangulate |
-	aiProcess_GenNormals |
-	aiProcess_JoinIdenticalVertices);
-
+    unsigned int flags = aiProcess_Triangulate | aiProcess_JoinIdenticalVertices;
+    
+    if (generateVertexNormals) {
+	importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, aiComponent_NORMALS);
+	importer.SetPropertyFloat(AI_CONFIG_PP_GSN_MAX_SMOOTHING_ANGLE, 30.0f);
+	// ignore normals in file and generate per vertex normals
+	flags |= aiProcess_RemoveComponent | aiProcess_GenSmoothNormals;
+    } else {
+	// generate face normals if not already present in the file
+	flags |= aiProcess_GenNormals;
+    }
+    
+    const aiScene* scene = importer.ReadFile(fileName, flags);
+    
     if (!scene) {
 	return;
     }
@@ -110,6 +119,9 @@ Mesh::bind()
 		float x = mesh->mVertices[face->mIndices[idx]].x;
 		float y = mesh->mVertices[face->mIndices[idx]].y;
 		float z = mesh->mVertices[face->mIndices[idx]].z;
+		float nx = mesh->mNormals[face->mIndices[idx]].x;
+		float ny = mesh->mNormals[face->mIndices[idx]].y;
+		float nz = mesh->mNormals[face->mIndices[idx]].z;
 
 		if (x < min.x) {
 		    min.x = x;
@@ -133,9 +145,9 @@ Mesh::bind()
 		vertices.push_back(y);
 		vertices.push_back(z);
 		vertices.push_back(1.0f);
-		normals.push_back(mesh->mNormals[face->mIndices[idx]].x);
-		normals.push_back(mesh->mNormals[face->mIndices[idx]].y);
-		normals.push_back(mesh->mNormals[face->mIndices[idx]].z);
+		normals.push_back(nx);
+		normals.push_back(ny);
+		normals.push_back(nz);
 		normals.push_back(0.0f);
 		textureCoordinates.push_back(x / 8);
 		textureCoordinates.push_back(z / 8);

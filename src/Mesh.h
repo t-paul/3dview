@@ -4,7 +4,7 @@
 
 class Mesh {
 public:
-    Mesh(const std::string fileName);
+    Mesh(const std::string fileName, bool generateVertexNormals = false);
     virtual ~Mesh();
     
     void bind();
@@ -16,6 +16,7 @@ public:
     
 private:
     std::string fileName;
+    bool generateVertexNormals;
     unsigned int count;
     GLuint vertexBuffer;
     GLuint normalBuffer;

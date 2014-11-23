@@ -24,6 +24,7 @@ private:
     float specularIntensity;
     float specularPower;
     float normalLength;
+    bool vertexNormals;
     QString material;
     QString texture;
     QString shader1;
@@ -54,6 +55,7 @@ private slots:
     void on_sliderSpecularIntensity_valueChanged(int);
     void on_sliderSpecularPower_valueChanged(int);
     void on_sliderNormalLength_valueChanged(int);
+    void on_checkBoxEnableVertexNormals_toggled(bool);
     void on_comboBoxMaterial_activated(QString);
     void on_comboBoxTexture_activated(QString);
     void on_comboBoxShader1_activated(QString);

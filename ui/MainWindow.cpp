@@ -15,6 +15,7 @@ MainWindow::MainWindow()
     shader1 = "phong";
     material = "Gold";
     texture = "Metal";
+    vertexNormals = false;
     
     QDir shader(":/resources/shader");
     QStringList filter("*.vs");
@@ -162,6 +163,13 @@ MainWindow::on_sliderNormalLength_valueChanged(int value)
 }
 
 void
+MainWindow::on_checkBoxEnableVertexNormals_toggled(bool value)
+{
+    vertexNormals = value;
+    updateGL();
+}
+
+void
 MainWindow::on_comboBoxMaterial_activated(QString value)
 {
     material = value;
@@ -274,6 +282,7 @@ MainWindow::updateGL()
     setColor(ui.labelColorSDisplay, colorS, 1.0f);
     setColor(ui.labelColorSDisplayI, colorS, specularIntensity);
     
+    ui.gl->setGenerateVertexNormals(vertexNormals);
     ui.gl->setTextureName(texture);
     ui.gl->setColors(colorA, colorD, colorS);
     ui.gl->setNormalLength(normalLength);
