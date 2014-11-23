@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="resources">
+    <file>shader/gouraud.fs</file>
+    <file>shader/gouraud.vs</file>
     <file>shader/bump.fs</file>
     <file>shader/bump.vs</file>
     <file>shader/texture.fs</file>
